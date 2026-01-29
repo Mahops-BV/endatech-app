@@ -74,6 +74,8 @@ model Contract {
   zzpSignature            String?   // Base64 signature image
   opdrachtgeverIp         String?
   zzpIp                   String?
+  opdrachtgeverDevice     String?   // Device info JSON
+  zzpDevice               String?   // Device info JSON
   startDate               DateTime?
   endDate                 DateTime?
   totalAmount             Decimal?

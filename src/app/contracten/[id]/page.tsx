@@ -72,16 +72,83 @@ export default function ContractDetailPage() {
     }
   }
 
+  const getDeviceInfo = async () => {
+    const ua = navigator.userAgent
+    const language = navigator.language
+    const screenWidth = window.screen.width
+    const screenHeight = window.screen.height
+    const colorDepth = window.screen.colorDepth
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+    // Detect device type
+    let deviceType = 'Desktop'
+    if (/Mobi|Android/i.test(ua)) {
+      deviceType = 'Mobile'
+    } else if (/Tablet|iPad/i.test(ua)) {
+      deviceType = 'Tablet'
+    }
+
+    // Detect browser
+    let browser = 'Unknown'
+    if (ua.includes('Firefox')) browser = 'Firefox'
+    else if (ua.includes('Edg')) browser = 'Edge'
+    else if (ua.includes('Chrome')) browser = 'Chrome'
+    else if (ua.includes('Safari')) browser = 'Safari'
+    else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera'
+
+    // Detect OS
+    let os = 'Unknown'
+    if (ua.includes('Windows')) os = 'Windows'
+    else if (ua.includes('Mac')) os = 'macOS'
+    else if (ua.includes('Linux')) os = 'Linux'
+    else if (ua.includes('Android')) os = 'Android'
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS'
+
+    // Try to get geolocation
+    let location: { latitude?: number; longitude?: number; accuracy?: number } = {}
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          timeout: 5000,
+          maximumAge: 60000,
+        })
+      })
+      location = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      }
+    } catch {
+      // Location not available or denied - continue without it
+      location = { latitude: undefined, longitude: undefined }
+    }
+
+    return {
+      deviceType,
+      browser,
+      os,
+      language,
+      screen: `${screenWidth}x${screenHeight}`,
+      colorDepth,
+      timezone,
+      location,
+      userAgent: ua,
+      signedAt: new Date().toISOString(),
+    }
+  }
+
   const handleSignatureSubmit = async (signature: string) => {
     setSigning(true)
     setShowSignaturePad(false)
     setError(null)
 
+    const deviceInfo = await getDeviceInfo()
+
     try {
       const response = await fetch(`/api/contracten/${params.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'sign', signature }),
+        body: JSON.stringify({ action: 'sign', signature, deviceInfo }),
       })
 
       if (!response.ok) {

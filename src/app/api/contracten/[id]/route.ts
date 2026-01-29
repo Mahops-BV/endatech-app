@@ -92,7 +92,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { action, signature } = body
+    const { action, signature, deviceInfo } = body
 
     if (action !== 'sign') {
       return NextResponse.json(
@@ -121,6 +121,13 @@ export async function PUT(
     // Get IP address for audit trail
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
 
+    // Build complete device stamp with IP
+    const deviceStamp = JSON.stringify({
+      ...deviceInfo,
+      ip,
+      serverTimestamp: new Date().toISOString(),
+    })
+
     const updateData: Record<string, boolean | Date | string> = {}
 
     if (isOpdrachtgever && !contract.opdrachtgeverSigned) {
@@ -128,11 +135,13 @@ export async function PUT(
       updateData.opdrachtgeverSignedAt = new Date()
       updateData.opdrachtgeverSignature = signature
       updateData.opdrachtgeverIp = ip
+      updateData.opdrachtgeverDevice = deviceStamp
     } else if (isZzp && !contract.zzpSigned) {
       updateData.zzpSigned = true
       updateData.zzpSignedAt = new Date()
       updateData.zzpSignature = signature
       updateData.zzpIp = ip
+      updateData.zzpDevice = deviceStamp
     } else {
       return NextResponse.json(
         { error: 'U heeft dit contract al ondertekend' },
