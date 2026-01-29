@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import SessionProvider from '@/components/providers/SessionProvider'
 import Header from '@/components/layout/Header'
-import CookieBanner from '@/components/CookieBanner'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -69,12 +68,13 @@ export default function RootLayout({
                     </ul>
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-4">Voorwaarden</h3>
+                    <h3 className="font-semibold mb-4">Juridisch</h3>
                     <ul className="space-y-2 text-slate-400 text-sm">
                       <li><a href="/voorwaarden/zzp" className="hover:text-emerald-500 transition-colors">Voorwaarden ZZP'ers</a></li>
                       <li><a href="/voorwaarden/opdrachtgever" className="hover:text-emerald-500 transition-colors">Voorwaarden Opdrachtgevers</a></li>
                       <li><a href="/privacy" className="hover:text-emerald-500 transition-colors">Privacyverklaring</a></li>
-                      <li><a href="/cookies" className="hover:text-emerald-500 transition-colors">Cookieverklaring</a></li>
+                      <li><a href="/cookies" className="hover:text-emerald-500 transition-colors">Cookiebeleid</a></li>
+                      <li><a href="/verwerkingsregister" className="hover:text-emerald-500 transition-colors">Verwerkingsregister</a></li>
                     </ul>
                   </div>
                   <div>
@@ -89,7 +89,6 @@ export default function RootLayout({
                 </div>
               </div>
             </footer>
-            <CookieBanner />
           </div>
         </SessionProvider>
       </body>
