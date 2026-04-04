@@ -1,168 +1,141 @@
-'use client'
+import Link from "next/link";
 
-import Link from 'next/link'
+export const metadata = {
+  title: "Privacyverklaring - EndaTech",
+  description: "Privacyverklaring van EndaTech. Hoe wij omgaan met uw persoonsgegevens.",
+};
 
 export default function PrivacyPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-slate-900 mb-8">
-        Privacyverklaring
-      </h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacyverklaring</h1>
+      <p className="text-gray-400 text-sm mb-10">Laatste update: april 2026</p>
 
-      <div className="prose prose-slate max-w-none space-y-8">
+      <div className="space-y-10 text-gray-600">
+
         <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Wie wij zijn</h2>
-          <p className="text-slate-600">
-            OpdrachtHub is verantwoordelijk voor de verwerking van persoonsgegevens zoals
-            beschreven in deze privacyverklaring.
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Wie wij zijn</h2>
+          <p>
+            EndaTech is verantwoordelijk voor de verwerking van persoonsgegevens zoals beschreven
+            in deze privacyverklaring.
           </p>
-          <div className="bg-slate-50 p-4 rounded-lg mt-4">
-            <p className="text-slate-700">
-              <strong>Contact:</strong>{' '}
-              <a href="mailto:privacy@opdrachthub.nl" className="text-emerald-600 hover:text-emerald-500">
-                privacy@opdrachthub.nl
-              </a>
-            </p>
+          <div className="bg-gray-50 rounded-xl p-4 mt-4 text-sm space-y-1">
+            <p><strong>Bedrijfsnaam:</strong> EndaTech</p>
+            <p><strong>Website:</strong> www.endatech.nl</p>
+            <p><strong>E-mail:</strong> info@endatech.nl</p>
+            <p><strong>Telefoon:</strong> 06-41088447</p>
           </div>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Gegevens die wij verwerken</h2>
-          <ul className="list-disc list-inside text-slate-600 space-y-1">
-            <li>Naam</li>
-            <li>E-mailadres</li>
-            <li>Telefoonnummer</li>
-            <li>Bedrijfsgegevens (bedrijfsnaam, KvK-nummer)</li>
-            <li>Opdrachten en reacties</li>
-            <li>Contractdocumenten en handtekeningen</li>
-            <li>Facturen</li>
-            <li>IP-adres en logs</li>
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">2. Welke gegevens verzamelen wij?</h2>
+          <p className="mb-3">Wij verwerken persoonsgegevens die u zelf aan ons verstrekt via:</p>
+          <ul className="list-disc list-inside space-y-2">
+            <li>Het offerteformulier (naam, e-mail, telefoon, adres, type woning)</li>
+            <li>Het contactformulier (naam, e-mail, telefoon, bericht)</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Doeleinden</h2>
-          <ul className="list-disc list-inside text-slate-600 space-y-1">
-            <li>Accountbeheer</li>
-            <li>Matching tussen opdrachtgevers en ZZP'ers</li>
-            <li>Contractvorming</li>
-            <li>Facturatie</li>
-            <li>Beveiliging</li>
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Waarvoor gebruiken wij uw gegevens?</h2>
+          <ul className="list-disc list-inside space-y-2">
+            <li>Het opstellen en versturen van offertes</li>
+            <li>Contact opnemen over uw aanvraag of vraag</li>
+            <li>Het inplannen van installaties en onderhoud</li>
+            <li>Het verwerken van betalingen</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Grondslagen</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-slate-200 rounded-lg">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-slate-700 border-b">Verwerking</th>
-                  <th className="px-4 py-2 text-left text-sm font-semibold text-slate-700 border-b">Grondslag</th>
-                </tr>
-              </thead>
-              <tbody className="text-slate-600 text-sm">
-                <tr className="border-b">
-                  <td className="px-4 py-3">Accountbeheer, matching, contractvorming</td>
-                  <td className="px-4 py-3">Uitvoering overeenkomst</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="px-4 py-3">Facturatie en administratie</td>
-                  <td className="px-4 py-3">Wettelijke verplichting</td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3">Beveiliging en logging</td>
-                  <td className="px-4 py-3">Gerechtvaardigd belang</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Bewaartermijnen</h2>
-          <ul className="list-disc list-inside text-slate-600 space-y-1">
-            <li><strong>Accounts:</strong> Zolang uw account actief is</li>
-            <li><strong>Contracten en facturen:</strong> 7 jaar (wettelijke bewaarplicht)</li>
-            <li><strong>Logs:</strong> 90 dagen</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Delen met derden</h2>
-          <p className="text-slate-600">
-            Wij delen uw gegevens alleen met noodzakelijke leveranciers waarmee wij
-            verwerkersovereenkomsten hebben:
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Grondslag voor verwerking</h2>
+          <p>
+            Wij verwerken uw persoonsgegevens op basis van:
           </p>
-          <ul className="list-disc list-inside text-slate-600 space-y-1 mt-2">
-            <li>Hosting (Vercel)</li>
-            <li>Database</li>
-            <li>E-mailprovider</li>
+          <ul className="list-disc list-inside space-y-2 mt-2">
+            <li><strong>Uitvoering van een overeenkomst</strong> — voor het verwerken van uw offerte of opdracht</li>
+            <li><strong>Gerechtvaardigd belang</strong> — voor het beantwoorden van uw contactverzoek</li>
+            <li><strong>Wettelijke verplichting</strong> — voor administratieve en fiscale verplichtingen</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Uw rechten</h2>
-          <p className="text-slate-600 mb-4">
-            Op grond van de AVG heeft u recht op:
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Bewaartermijn</h2>
+          <p>
+            Wij bewaren uw persoonsgegevens niet langer dan noodzakelijk voor de doeleinden waarvoor
+            ze zijn verzameld. Offertegegevens bewaren wij maximaal 2 jaar. Factuurgegevens bewaren
+            wij 7 jaar conform de wettelijke fiscale bewaarplicht.
           </p>
-          <ul className="list-disc list-inside text-slate-600 space-y-1">
-            <li>Inzage in uw gegevens</li>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Delen met derden</h2>
+          <p>
+            Wij verkopen uw gegevens niet aan derden. Wij kunnen uw gegevens delen met:
+          </p>
+          <ul className="list-disc list-inside space-y-2 mt-2">
+            <li>Onze databeheerder (Neon PostgreSQL — beveiligde cloudopslag, EU)</li>
+            <li>Trustpilot — uitsluitend voor het uitnodigen van een recensie na afronding</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">7. Beveiliging</h2>
+          <p>
+            Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens
+            te beschermen tegen verlies, misbruik of ongeautoriseerde toegang. Onze website maakt
+            gebruik van HTTPS-versleuteling.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">8. Uw rechten</h2>
+          <p className="mb-2">U heeft het recht op:</p>
+          <ul className="list-disc list-inside space-y-2">
+            <li>Inzage in uw persoonsgegevens</li>
             <li>Correctie van onjuiste gegevens</li>
             <li>Verwijdering van uw gegevens</li>
-            <li>Dataportabiliteit</li>
+            <li>Beperking van de verwerking</li>
             <li>Bezwaar tegen verwerking</li>
+            <li>Gegevensoverdraagbaarheid</li>
           </ul>
-          <p className="text-slate-600 mt-4">
-            Neem contact op via{' '}
-            <a href="mailto:privacy@opdrachthub.nl" className="text-emerald-600 hover:text-emerald-500">
-              privacy@opdrachthub.nl
-            </a>{' '}
-            om uw rechten uit te oefenen.
+          <p className="mt-3">
+            U kunt een verzoek indienen via{" "}
+            <a href="mailto:info@endatech.nl" className="text-[#2563EB] hover:underline">
+              info@endatech.nl
+            </a>
+            . Wij reageren binnen 30 dagen.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Beveiliging</h2>
-          <ul className="list-disc list-inside text-slate-600 space-y-1">
-            <li>HTTPS-versleuteling</li>
-            <li>Toegangscontrole</li>
-            <li>Logging</li>
-            <li>Minimale dataverwerking</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Cookies</h2>
-          <p className="text-slate-600">
-            Lees meer over ons cookiegebruik in ons{' '}
-            <Link href="/cookies" className="text-emerald-600 hover:text-emerald-500">
-              cookiebeleid
-            </Link>.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Klachten</h2>
-          <p className="text-slate-600">
-            Heeft u een klacht? Neem contact met ons op of dien een klacht in bij de{' '}
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">9. Klachten</h2>
+          <p>
+            Heeft u een klacht over de verwerking van uw persoonsgegevens? Neem dan contact met
+            ons op. U heeft ook het recht een klacht in te dienen bij de{" "}
             <a
-              href="https://autoriteitpersoonsgegevens.nl"
+              href="https://www.autoriteitpersoonsgegevens.nl"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-600 hover:text-emerald-500"
+              className="text-[#2563EB] hover:underline"
             >
               Autoriteit Persoonsgegevens
-            </a>.
+            </a>
+            .
           </p>
         </section>
-      </div>
 
-      <div className="mt-12 pt-8 border-t border-slate-200">
-        <p className="text-sm text-slate-500">
-          Laatste update: januari 2026
-        </p>
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">10. Cookies</h2>
+          <p>
+            Wij gebruiken uitsluitend functionele cookies. Zie ons{" "}
+            <Link href="/cookies" className="text-[#2563EB] hover:underline">
+              cookiebeleid
+            </Link>{" "}
+            voor meer informatie.
+          </p>
+        </section>
+
       </div>
     </div>
-  )
+  );
 }
