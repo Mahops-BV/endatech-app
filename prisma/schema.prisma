@@ -6,105 +6,62 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
+model Quote {
+  id              String      @id @default(cuid())
+  quoteNumber     String      @unique // Format: END-2026-XXXXX
+
+  // Customer info
+  name            String
+  email           String
+  phone           String
+  address         String
+  city            String
+  postalCode      String
+
+  // Property info
+  propertyType    String      // Type woning/pand
+  rooms           String      // Gewenste ruimte(s)
+  photos          String[]    // URLs to uploaded photos
+  notes           String?     // Extra opmerkingen
+
+  // Quote details
+  description     String?     // Quote description/content
+  totalAmount     Decimal?    // Total price
+  validUntil      DateTime?   // Quote validity date
+  pdfUrl          String?     // Generated PDF URL
+
+  // Signature
+  signed          Boolean     @default(false)
+  signedAt        DateTime?
+  signature       String?     // Base64 signature image
+  signedIp        String?
+  signedDevice    String?     // Device info JSON
+
+  // Status
+  status          QuoteStatus @default(PENDING)
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model ContactRequest {
   id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
   name      String
-  userType  UserType
-  company   String?
-  kvkNumber String?
-  bio       String?
-  skills    String[]
+  email     String
   phone     String?
+  subject   String
+  message   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  opdrachten               Opdracht[]
-  reacties                 Reactie[]
-  contractsAsOpdrachtgever Contract[] @relation("ContractOpdrachtgever")
-  contractsAsZzp           Contract[] @relation("ContractZzp")
 }
 
-model Opdracht {
-  id           String         @id @default(cuid())
-  title        String
-  description  String
-  scope        String
-  duration     String
-  hourlyRate   Decimal
-  location     String?
-  requirements String?
-  status       OpdrachtStatus @default(OPEN)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-
-  opdrachtgeverId String
-  opdrachtgever   User      @relation(fields: [opdrachtgeverId], references: [id])
-  reacties        Reactie[]
-  contract        Contract?
-}
-
-model Reactie {
-  id         String        @id @default(cuid())
-  motivation String
-  proposal   String?
-  hourlyRate Decimal?
-  status     ReactieStatus @default(PENDING)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-
-  zzpId      String
-  zzp        User     @relation(fields: [zzpId], references: [id])
-  opdrachtId String
-  opdracht   Opdracht @relation(fields: [opdrachtId], references: [id])
-
-  @@unique([zzpId, opdrachtId])
-}
-
-model Contract {
-  id                      String    @id @default(cuid())
-  contractNumber          String    @unique
-  content                 String
-  opdrachtgeverSigned     Boolean   @default(false)
-  zzpSigned               Boolean   @default(false)
-  opdrachtgeverSignedAt   DateTime?
-  zzpSignedAt             DateTime?
-  opdrachtgeverSignature  String?   // Base64 signature image
-  zzpSignature            String?   // Base64 signature image
-  opdrachtgeverIp         String?
-  zzpIp                   String?
-  opdrachtgeverDevice     String?   // Device info JSON
-  zzpDevice               String?   // Device info JSON
-  startDate               DateTime?
-  endDate                 DateTime?
-  totalAmount             Decimal?
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-
-  opdrachtId      String   @unique
-  opdracht        Opdracht @relation(fields: [opdrachtId], references: [id])
-  opdrachtgeverId String
-  opdrachtgever   User     @relation("ContractOpdrachtgever", fields: [opdrachtgeverId], references: [id])
-  zzpId           String
-  zzp             User     @relation("ContractZzp", fields: [zzpId], references: [id])
-}
-
-enum UserType {
-  OPDRACHTGEVER
-  ZZP
-}
-
-enum OpdrachtStatus {
-  OPEN
-  IN_SELECTIE
-  GEMATCHT
-  AFGEROND
-  GEANNULEERD
-}
-
-enum ReactieStatus {
-  PENDING
-  GEACCEPTEERD
-  AFGEWEZEN
+enum QuoteStatus {
+  PENDING      // Waiting for review
+  SENT         // Quote sent to customer
+  VIEWED       // Customer viewed the quote
+  SIGNED       // Customer signed
+  ACCEPTED     // Work accepted/scheduled
+  COMPLETED    // Installation done
+  EXPIRED      // Quote expired
+  CANCELLED    // Cancelled
 }

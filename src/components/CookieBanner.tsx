@@ -1,93 +1,67 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
-export default function CookieBanner() {
-  const [showBanner, setShowBanner] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
+const CONSENT_KEY = "cookie_consent";
+
+export function CookieBanner() {
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookie-consent')
-    if (consent) {
-      setShowBanner(false)
+    // Only show if no consent stored yet
+    if (!localStorage.getItem(CONSENT_KEY)) {
+      setVisible(true);
     }
-    setIsLoading(false)
-  }, [])
+  }, []);
 
-  const acceptCookies = () => {
-    localStorage.setItem('cookie-consent', 'accepted')
-    localStorage.setItem('cookie-consent-date', new Date().toISOString())
-    setShowBanner(false)
+  function accept() {
+    localStorage.setItem(CONSENT_KEY, "accepted");
+    setVisible(false);
   }
 
-  const declineCookies = () => {
-    localStorage.setItem('cookie-consent', 'declined')
-    localStorage.setItem('cookie-consent-date', new Date().toISOString())
-    setShowBanner(false)
+  function decline() {
+    localStorage.setItem(CONSENT_KEY, "declined");
+    setVisible(false);
   }
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-slate-900/95 z-[9999] flex items-center justify-center">
-        <div className="animate-pulse text-white">Laden...</div>
-      </div>
-    )
-  }
-
-  if (!showBanner) return null
+  if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/95 z-[9999] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8">
-        <div className="text-center mb-6">
-          <div className="flex justify-center mb-4">
-            <img src="/icon.svg" alt="OpdrachtHub" className="h-16 w-16" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">
-            Cookievoorkeuren
-          </h2>
-          <p className="text-slate-600">
-            Wij gebruiken functionele cookies om het platform goed te laten werken.
-            Deze cookies zijn noodzakelijk voor inloggen en beveiliging.
-          </p>
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6">
+      <div className="max-w-4xl mx-auto bg-gray-900 text-white rounded-2xl shadow-2xl p-5 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        {/* Icon */}
+        <div className="flex-shrink-0 w-10 h-10 bg-[#2563EB]/20 rounded-xl flex items-center justify-center">
+          <svg className="w-5 h-5 text-[#22D3EE]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
 
-        <div className="bg-slate-50 rounded-lg p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <div className="w-5 h-5 mt-0.5 rounded bg-emerald-500 flex items-center justify-center flex-shrink-0">
-              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div>
-              <p className="font-medium text-slate-900">Functionele cookies</p>
-              <p className="text-sm text-slate-500">Noodzakelijk voor inloggen, sessies en beveiliging</p>
-            </div>
-          </div>
-        </div>
+        {/* Text */}
+        <p className="flex-1 text-sm text-gray-300 leading-relaxed">
+          Wij gebruiken alleen functionele cookies die nodig zijn voor de werking van deze website.
+          Geen tracking of advertenties.{" "}
+          <Link href="/cookies" className="text-[#22D3EE] hover:underline whitespace-nowrap">
+            Meer informatie
+          </Link>
+        </p>
 
-        <div className="flex flex-col gap-3">
+        {/* Buttons */}
+        <div className="flex gap-3 flex-shrink-0 w-full sm:w-auto">
           <button
-            onClick={acceptCookies}
-            className="w-full px-6 py-3 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium"
-          >
-            Accepteren
-          </button>
-          <button
-            onClick={declineCookies}
-            className="w-full px-6 py-3 text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg hover:border-slate-400 transition-colors"
+            onClick={decline}
+            className="flex-1 sm:flex-none px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white border border-gray-600 hover:border-gray-400 rounded-lg transition-colors"
           >
             Weigeren
           </button>
-        </div>
-
-        <div className="mt-4 text-center">
-          <Link href="/cookies" className="text-sm text-emerald-600 hover:text-emerald-700 underline">
-            Lees ons cookiebeleid
-          </Link>
+          <button
+            onClick={accept}
+            className="flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold bg-[#2563EB] hover:bg-[#1d4ed8] text-white rounded-lg transition-colors"
+          >
+            Akkoord
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
