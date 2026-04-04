@@ -1,12 +1,8 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-
-export const alt = 'OpdrachtHub - Vind de perfecte match voor uw opdracht'
-export const size = {
-  width: 1200,
-  height: 630,
-}
+export const alt = "EndaTech - Betaalbare airco's, snel geplaatst"
+export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 export default async function Image() {
@@ -20,61 +16,78 @@ export default async function Image() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#0f172a',
-          backgroundImage: 'linear-gradient(to bottom right, #0f172a, #1e293b)',
+          backgroundColor: '#ffffff',
+          position: 'relative',
         }}
       >
-        <div
-          style={{
+        {/* Rode achtergrond links */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0,
+          width: '50%', height: '100%',
+          backgroundColor: '#DC2626',
+          display: 'flex',
+        }} />
+        {/* Blauwe achtergrond rechts */}
+        <div style={{
+          position: 'absolute', top: 0, right: 0,
+          width: '50%', height: '100%',
+          backgroundColor: '#2563EB',
+          display: 'flex',
+        }} />
+
+        {/* Content card */}
+        <div style={{
+          position: 'relative',
+          backgroundColor: 'white',
+          borderRadius: 24,
+          padding: '60px 80px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
+          minWidth: 700,
+        }}>
+          {/* Logo tekst */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+            <span style={{ fontSize: 80, fontWeight: 900, color: '#DC2626', letterSpacing: -2 }}>
+              ENDA
+            </span>
+            <span style={{ fontSize: 80, fontWeight: 900, color: '#2563EB', letterSpacing: -2 }}>
+              TECH
+            </span>
+          </div>
+
+          {/* Divider */}
+          <div style={{
+            width: 120, height: 4,
+            background: 'linear-gradient(to right, #DC2626, #2563EB)',
+            borderRadius: 2,
+            marginBottom: 24,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 40,
-          }}
-        >
-          <svg
-            width="100"
-            height="100"
-            viewBox="0 0 256 256"
-            style={{ marginRight: 24 }}
-          >
-            <rect x="16" y="16" width="224" height="224" rx="56" fill="#0F172A" stroke="#10b981" strokeWidth="4"/>
-            <g transform="translate(64,40) scale(2.0)">
-              <path d="M32 4C20.4 4 11 13.4 11 25c0 13.8 17.7 34.5 20 37.1c.5.6 1.5.6 2 0C35.3 59.5 53 38.8 53 25 53 13.4 43.6 4 32 4zM32 15c5.5 0 10 4.5 10 10 0 5.1-3.8 9.3-8.7 9.9c-.4.1-.7.4-.7.8v3.2l6.2-3.6c.3-.2.7-.2 1 0l4.6 2.7c.6.4.4 1.3-.3 1.5l-5.6 1.7v5.1c0 .8-.9 1.2-1.5.7l-4.4-4.1l-4.4 4.1c-.6.5-1.5.1-1.5-.7v-5.1l-5.6-1.7c-.7-.2-.9-1.1-.3-1.5l4.6-2.7c.3-.2.7-.2 1 0l6.2 3.6v-3.2c0-.4-.3-.7-.7-.8C25.8 34.3 22 30.1 22 25c0-5.5 4.5-10 10-10z" fill="#10b981"/>
-              <circle cx="32" cy="25" r="2.2" fill="#10b981"/>
-              <circle cx="26" cy="29.5" r="1.9" fill="#10b981"/>
-              <circle cx="38" cy="29.5" r="1.9" fill="#10b981"/>
-            </g>
-          </svg>
-          <span style={{ fontSize: 64, color: 'white', fontWeight: 'bold' }}>
-            Opdracht
-            <span style={{ color: '#10b981' }}>Hub</span>
-          </span>
+          }} />
+
+          {/* Tagline */}
+          <div style={{ fontSize: 32, color: '#374151', fontWeight: 600, marginBottom: 12, display: 'flex' }}>
+            Duurzaam koelen en verwarmen
+          </div>
+
+          {/* Sub */}
+          <div style={{ fontSize: 22, color: '#9CA3AF', display: 'flex' }}>
+            Betaalbare airco&apos;s · Snelle installatie · Heel Nederland
+          </div>
         </div>
-        <div
-          style={{
-            fontSize: 32,
-            color: '#94a3b8',
-            textAlign: 'center',
-            maxWidth: 800,
-            lineHeight: 1.4,
-          }}
-        >
-          Vind de perfecte match voor uw opdracht
-        </div>
-        <div
-          style={{
-            fontSize: 24,
-            color: '#64748b',
-            marginTop: 20,
-          }}
-        >
-          Verbindt opdrachtgevers met zelfstandige professionals
+
+        {/* URL label onderaan */}
+        <div style={{
+          position: 'absolute', bottom: 28,
+          color: 'rgba(255,255,255,0.7)',
+          fontSize: 22,
+          display: 'flex',
+        }}>
+          www.endatech.nl
         </div>
       </div>
     ),
-    {
-      ...size,
-    }
+    { ...size }
   )
 }
