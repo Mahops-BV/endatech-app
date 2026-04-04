@@ -1,6 +1,4 @@
-import { fetchTrustpilotData } from "@/lib/trustpilot";
-
-const TP_URL = "https://nl.trustpilot.com/review/endatech.nl";
+import { TRUSTPILOT_SCORE, TRUSTPILOT_REVIEWS, TRUSTPILOT_URL } from "@/lib/trustpilot";
 
 function TrustpilotLogo({ height = 18 }: { height?: number }) {
   return (
@@ -42,45 +40,39 @@ function StarRating({ score, size = 18 }: { score: number; size?: number }) {
 }
 
 /** Smalle balk in de header */
-export async function TrustpilotBanner() {
-  const { score, reviews } = await fetchTrustpilotData();
-
+export function TrustpilotBanner() {
   return (
     <a
-      href={TP_URL}
+      href={TRUSTPILOT_URL}
       target="_blank"
       rel="noopener noreferrer"
       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-      aria-label={`EndaTech scoort ${score} op Trustpilot gebaseerd op ${reviews} beoordelingen`}
     >
       <TrustpilotLogo height={16} />
-      <StarRating score={score} size={14} />
+      <StarRating score={TRUSTPILOT_SCORE} size={14} />
       <span className="text-xs text-gray-500">
-        <strong className="text-gray-700">{score}</strong> · {reviews} beoordelingen
+        <strong className="text-gray-700">{TRUSTPILOT_SCORE}</strong> · {TRUSTPILOT_REVIEWS} beoordelingen
       </span>
     </a>
   );
 }
 
 /** Grotere widget op de homepage */
-export async function TrustpilotHomepage() {
-  const { score, reviews } = await fetchTrustpilotData();
-
+export function TrustpilotHomepage() {
   return (
     <div className="text-center">
       <p className="text-sm text-gray-500 mb-3">Wat onze klanten zeggen</p>
       <a
-        href={TP_URL}
+        href={TRUSTPILOT_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex flex-col items-center gap-2 group"
-        aria-label={`EndaTech scoort ${score} op Trustpilot gebaseerd op ${reviews} beoordelingen`}
       >
         <TrustpilotLogo height={22} />
-        <StarRating score={score} size={28} />
+        <StarRating score={TRUSTPILOT_SCORE} size={28} />
         <p className="text-sm text-gray-600">
-          TrustScore <strong>{score}</strong> op basis van{" "}
-          <strong>{reviews} beoordelingen</strong>
+          TrustScore <strong>{TRUSTPILOT_SCORE}</strong> op basis van{" "}
+          <strong>{TRUSTPILOT_REVIEWS} beoordelingen</strong>
         </p>
         <span className="text-xs text-[#00b67a] group-hover:underline">
           Bekijk alle beoordelingen →
