@@ -1,64 +1,117 @@
 "use client";
 
-const TP_REVIEW_URL = "https://nl.trustpilot.com/review/endatech.nl";
-const TP_GREEN = "#00b67a";
+import Script from "next/script";
+import { useRef, useEffect } from "react";
 
-function TrustpilotLogo({ height = 20 }: { height?: number }) {
-  return (
-    <svg height={height} viewBox="0 0 116 25" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Trustpilot">
-      <path d="M17.4 0H0l5.7 17.5L0 25h17.4l5.7-17.5L17.4 0z" fill={TP_GREEN} />
-      <path d="M17.4 0l-5.7 17.5 5.7 7.5 5.7-17.5L17.4 0z" fill="#005128" />
-      <text x="28" y="19" fontFamily="'Helvetica Neue', Helvetica, Arial, sans-serif" fontWeight="700" fontSize="18" fill="#191919">
-        Trustpilot
-      </text>
-    </svg>
-  );
+const BUSINESS_UNIT_ID = "668aae6374c09786cb00a814";
+const SCRIPT_SRC = "https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js";
+
+declare global {
+  interface Window {
+    Trustpilot?: { loadFromElement: (el: HTMLElement, force?: boolean) => void };
+  }
 }
 
-function Stars({ count = 5, size = 16 }: { count?: number; size?: number }) {
-  return (
-    <span className="flex items-center gap-0.5" aria-label={`${count} sterren`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill={i < count ? TP_GREEN : "#dcdce6"}>
-          <path d="M12 2l2.9 6.3 6.8.6-5 4.7 1.5 6.8L12 17.3l-6.2 3.1 1.5-6.8-5-4.7 6.8-.6L12 2z" />
-        </svg>
-      ))}
-    </span>
-  );
+function useTrustpilotWidget(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // Try immediately (script may already be loaded from previous page)
+    if (window.Trustpilot) {
+      window.Trustpilot.loadFromElement(el, true);
+      return;
+    }
+
+    // Poll until script is ready (up to 10s)
+    let attempts = 0;
+    const interval = setInterval(() => {
+      if (window.Trustpilot) {
+        window.Trustpilot.loadFromElement(el, true);
+        clearInterval(interval);
+      } else if (++attempts > 40) {
+        clearInterval(interval);
+      }
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 }
 
 /** Smalle balk in de header */
 export function TrustpilotBanner() {
+  const ref = useRef<HTMLDivElement>(null);
+  useTrustpilotWidget(ref);
+
   return (
-    <a
-      href={TP_REVIEW_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center gap-3 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-    >
-      <TrustpilotLogo height={16} />
-      <Stars count={5} size={14} />
-      <span className="text-gray-500 text-xs">3 reviews</span>
-      <span className="text-xs text-gray-400 hidden sm:inline">Bekijk onze beoordelingen</span>
-    </a>
+    <>
+      <Script
+        src={SCRIPT_SRC}
+        strategy="afterInteractive"
+        onLoad={() => {
+          if (ref.current && window.Trustpilot) {
+            window.Trustpilot.loadFromElement(ref.current, true);
+          }
+        }}
+      />
+      <div
+        ref={ref}
+        className="trustpilot-widget"
+        data-locale="nl-NL"
+        data-template-id="5406e65db0d04a09e042d5fc"
+        data-businessunit-id={BUSINESS_UNIT_ID}
+        data-style-height="28px"
+        data-style-width="100%"
+        data-theme="light"
+      >
+        <a
+          href="https://nl.trustpilot.com/review/endatech.nl"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-gray-500 hover:underline"
+        >
+          Bekijk onze reviews op Trustpilot
+        </a>
+      </div>
+    </>
   );
 }
 
 /** Grotere widget op de homepage */
 export function TrustpilotHomepage() {
+  const ref = useRef<HTMLDivElement>(null);
+  useTrustpilotWidget(ref);
+
   return (
-    <div className="text-center">
-      <p className="text-sm text-gray-500 mb-3">Beoordeeld door onze klanten</p>
-      <a
-        href={TP_REVIEW_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex flex-col items-center gap-2 group"
+    <>
+      <Script
+        src={SCRIPT_SRC}
+        strategy="afterInteractive"
+        onLoad={() => {
+          if (ref.current && window.Trustpilot) {
+            window.Trustpilot.loadFromElement(ref.current, true);
+          }
+        }}
+      />
+      <div
+        ref={ref}
+        className="trustpilot-widget"
+        data-locale="nl-NL"
+        data-template-id="5419b6a8b0d04a076446a9ad"
+        data-businessunit-id={BUSINESS_UNIT_ID}
+        data-style-height="52px"
+        data-style-width="100%"
+        data-theme="light"
       >
-        <TrustpilotLogo height={24} />
-        <Stars count={5} size={22} />
-        <span className="text-sm text-gray-500 group-hover:underline">3 beoordelingen · Schrijf een recensie</span>
-      </a>
-    </div>
+        <a
+          href="https://nl.trustpilot.com/review/endatech.nl"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-gray-500 hover:underline"
+        >
+          Bekijk onze reviews op Trustpilot
+        </a>
+      </div>
+    </>
   );
 }
