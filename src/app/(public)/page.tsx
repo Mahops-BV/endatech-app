@@ -84,6 +84,21 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Waarom EndaTech?</h2>
           </div>
 
+          {/* F-Gassen certificering */}
+          <div className="flex justify-center mb-10">
+            <div className="flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4">
+              <img
+                src="/fgassen-cert.gif"
+                alt="F-Gassen Gecertificeerd"
+                className="h-14 w-auto object-contain"
+              />
+              <div>
+                <p className="font-semibold text-gray-900 text-sm">F-Gassen Gecertificeerd</p>
+                <p className="text-gray-500 text-xs mt-0.5">Gecertificeerd voor de installatie van airco&apos;s met koudemiddelen</p>
+              </div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-4 gap-8">
             {/* Betaalbaar */}
             <div className="text-center p-6 rounded-2xl hover:shadow-lg transition-shadow">
