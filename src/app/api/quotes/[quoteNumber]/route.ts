@@ -1,12 +1,25 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+function normalizePhone(phone: string): string {
+  return phone.replace(/[\s\-\(\)]/g, "").replace(/^00/, "+").replace(/^0/, "+31");
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ quoteNumber: string }> }
 ) {
   try {
     const { quoteNumber } = await params;
+    const url = new URL(request.url);
+    const phone = url.searchParams.get("phone") || "";
+
+    if (!phone) {
+      return NextResponse.json(
+        { error: "Vul je telefoonnummer in om de offerte te bekijken" },
+        { status: 400 }
+      );
+    }
 
     const quote = await prisma.quote.findUnique({
       where: { quoteNumber },
@@ -15,7 +28,19 @@ export async function GET(
 
     if (!quote) {
       return NextResponse.json(
-        { error: "Offerte niet gevonden" },
+        { error: "Offerte niet gevonden. Controleer het offertenummer en telefoonnummer." },
+        { status: 404 }
+      );
+    }
+
+    // Verify phone number
+    const normalizedInput = normalizePhone(phone);
+    const normalizedStored = normalizePhone(quote.phone);
+
+    if (normalizedInput !== normalizedStored) {
+      // Don't reveal whether the quote exists
+      return NextResponse.json(
+        { error: "Offerte niet gevonden. Controleer het offertenummer en telefoonnummer." },
         { status: 404 }
       );
     }

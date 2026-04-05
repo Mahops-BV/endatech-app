@@ -59,6 +59,7 @@ function fmt(n: number) {
 
 export default function OfferteBekijkenPage() {
   const [quoteNumber, setQuoteNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [quote, setQuote] = useState<Quote | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -74,7 +75,7 @@ export default function OfferteBekijkenPage() {
     setQuote(null);
 
     try {
-      const response = await fetch(`/api/quotes/${quoteNumber}`);
+      const response = await fetch(`/api/quotes/${quoteNumber}?phone=${encodeURIComponent(phoneNumber)}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -155,7 +156,7 @@ export default function OfferteBekijkenPage() {
             Offerte bekijken
           </h1>
           <p className="text-lg text-gray-600">
-            Heb je een offerte ontvangen van EndaTech? Voer hieronder je offertenummer in.
+            Heb je een offerte ontvangen van EndaTech? Voer hieronder je gegevens in.
           </p>
         </div>
 
@@ -171,7 +172,7 @@ export default function OfferteBekijkenPage() {
             )}
 
             <form onSubmit={handleLookup}>
-              <div className="mb-6">
+              <div className="mb-4">
                 <label htmlFor="quoteNumber" className="block text-sm font-medium text-gray-700 mb-2">
                   Offertenummer
                 </label>
@@ -186,9 +187,25 @@ export default function OfferteBekijkenPage() {
                 />
               </div>
 
+              <div className="mb-6">
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                  Telefoonnummer
+                </label>
+                <input
+                  type="tel"
+                  id="phoneNumber"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all text-lg"
+                  placeholder="06-12345678"
+                />
+                <p className="text-xs text-gray-400 mt-1">Het telefoonnummer dat je hebt opgegeven bij de aanvraag</p>
+              </div>
+
               <button
                 type="submit"
-                disabled={loading || !quoteNumber}
+                disabled={loading || !quoteNumber || !phoneNumber}
                 className="w-full py-4 bg-[#2563EB] text-white font-semibold rounded-lg hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Bezig met zoeken..." : "Bekijk offerte"}
@@ -229,6 +246,7 @@ export default function OfferteBekijkenPage() {
               onClick={() => {
                 setQuote(null);
                 setQuoteNumber("");
+                setPhoneNumber("");
                 setSigned(false);
               }}
               className="text-[#2563EB] hover:underline flex items-center gap-2"
