@@ -32,6 +32,7 @@ export async function GET(
       quoteNumber: quote.quoteNumber,
       name: quote.name,
       email: quote.email,
+      phone: quote.phone,
       address: quote.address,
       postalCode: quote.postalCode,
       city: quote.city,

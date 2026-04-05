@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import SignaturePad from "@/components/signing/SignaturePad";
+import type { SignatureData } from "@/components/signing/SignaturePad";
 
 interface QuoteLine {
   productName: string;
@@ -12,10 +13,31 @@ interface QuoteLine {
   lineTotal: number;
 }
 
+async function computeDocumentHash(quote: Quote): Promise<string> {
+  const content = JSON.stringify({
+    quoteNumber: quote.quoteNumber,
+    name: quote.name,
+    email: quote.email,
+    description: quote.description,
+    totalAmount: quote.totalAmount,
+    btwPercentage: quote.btwPercentage,
+    lines: quote.lines.map((l) => ({
+      productName: l.productName,
+      quantity: l.quantity,
+      unitPrice: l.unitPrice,
+      lineTotal: l.lineTotal,
+    })),
+  });
+  const encoder = new TextEncoder();
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(content));
+  return Array.from(new Uint8Array(hashBuffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 interface Quote {
   quoteNumber: string;
   name: string;
   email: string;
+  phone: string;
   address: string;
   postalCode: string;
   city: string;
@@ -43,6 +65,7 @@ export default function OfferteBekijkenPage() {
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
   const [showSignaturePad, setShowSignaturePad] = useState(false);
+  const [docHash, setDocHash] = useState("");
 
   async function handleLookup(e: React.FormEvent) {
     e.preventDefault();
@@ -69,7 +92,7 @@ export default function OfferteBekijkenPage() {
     }
   }
 
-  async function handleSign(signData: { signature: string; device: unknown; location: unknown }) {
+  async function handleSign(signData: SignatureData) {
     if (!quote) return;
     setShowSignaturePad(false);
     setSigning(true);
@@ -82,6 +105,9 @@ export default function OfferteBekijkenPage() {
           signature: signData.signature,
           device: signData.device,
           location: signData.location,
+          documentHash: signData.documentHash,
+          consent: signData.consent,
+          verification: signData.verification,
         }),
       });
 
@@ -331,6 +357,9 @@ export default function OfferteBekijkenPage() {
               {showSignaturePad && (
                 <SignaturePad
                   signerName={quote.name}
+                  signerEmail={quote.email}
+                  signerPhone={quote.phone}
+                  documentHash={docHash}
                   onSave={handleSign}
                   onCancel={() => setShowSignaturePad(false)}
                 />
@@ -339,7 +368,11 @@ export default function OfferteBekijkenPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 {!signed && quote.status !== "PENDING" && (
                   <button
-                    onClick={() => setShowSignaturePad(true)}
+                    onClick={async () => {
+                      const hash = await computeDocumentHash(quote);
+                      setDocHash(hash);
+                      setShowSignaturePad(true);
+                    }}
                     disabled={signing}
                     className="flex-1 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
                   >
