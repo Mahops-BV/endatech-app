@@ -119,3 +119,24 @@ export async function PATCH(
 
   return NextResponse.json(serializeQuote(updated as unknown as Record<string, unknown>, newLines as unknown as Record<string, unknown>[]));
 }
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ quoteNumber: string }> }
+) {
+  if (!(await requireAdmin())) {
+    return NextResponse.json({ error: "Niet geautoriseerd" }, { status: 401 });
+  }
+
+  const { quoteNumber } = await params;
+  const quote = await prisma.quote.findUnique({ where: { quoteNumber } });
+
+  if (!quote) {
+    return NextResponse.json({ error: "Offerte niet gevonden" }, { status: 404 });
+  }
+
+  // Cascade delete handles QuoteLines automatically
+  await prisma.quote.delete({ where: { quoteNumber } });
+
+  return NextResponse.json({ success: true });
+}

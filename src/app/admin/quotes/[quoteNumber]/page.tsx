@@ -404,8 +404,23 @@ export default function AdminQuotePage() {
           </div>
         </div>
 
-        {/* Save button */}
-        <div className="flex justify-end">
+        {/* Save & delete buttons */}
+        <div className="flex justify-between items-center">
+          <button
+            onClick={async () => {
+              if (!confirm("Weet je zeker dat je deze offerte wilt verwijderen? Dit kan niet ongedaan worden.")) return;
+              try {
+                const res = await fetch(`/api/admin/quotes/${quoteNumber}`, { method: "DELETE" });
+                if (!res.ok) throw new Error();
+                router.push("/admin");
+              } catch {
+                setError("Verwijderen mislukt");
+              }
+            }}
+            className="px-4 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
+          >
+            Offerte verwijderen
+          </button>
           <button
             onClick={handleSave}
             disabled={saving}
