@@ -4,6 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import SignaturePad from "@/components/signing/SignaturePad";
 
+interface QuoteLine {
+  productName: string;
+  description: string | null;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+
 interface Quote {
   quoteNumber: string;
   name: string;
@@ -15,10 +23,16 @@ interface Quote {
   rooms: string;
   description: string | null;
   totalAmount: number | null;
+  btwPercentage: number;
   validUntil: string | null;
   status: string;
   signed: boolean;
   signedAt: string | null;
+  lines: QuoteLine[];
+}
+
+function fmt(n: number) {
+  return n.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export default function OfferteBekijkenPage() {
@@ -96,6 +110,12 @@ export default function OfferteBekijkenPage() {
     return labels[status] || { text: status, color: "bg-gray-100 text-gray-800" };
   };
 
+  // Calculate totals from lines
+  const subtotal = quote?.lines.reduce((sum, l) => sum + l.lineTotal, 0) ?? 0;
+  const btwPct = quote?.btwPercentage ?? 21;
+  const btwAmount = subtotal * (btwPct / 100);
+  const totalInclBtw = subtotal + btwAmount;
+
   return (
     <div className="py-12 md:py-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -145,34 +165,18 @@ export default function OfferteBekijkenPage() {
               </button>
             </form>
 
-            {/* Info sections */}
             <div className="mt-8 pt-8 border-t border-gray-100">
               <h3 className="font-medium text-gray-900 mb-4">Wat kun je doen?</h3>
               <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-gray-600">
-                  <svg className="w-5 h-5 text-[#22D3EE]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Offerte bekijken
-                </li>
-                <li className="flex items-center gap-3 text-gray-600">
-                  <svg className="w-5 h-5 text-[#22D3EE]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  PDF downloaden
-                </li>
-                <li className="flex items-center gap-3 text-gray-600">
-                  <svg className="w-5 h-5 text-[#22D3EE]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Digitaal ondertekenen
-                </li>
+                {["Offerte bekijken", "PDF downloaden", "Digitaal ondertekenen"].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-gray-600">
+                    <svg className="w-5 h-5 text-[#22D3EE]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
               </ul>
-            </div>
-
-            <div className="mt-8 pt-8 border-t border-gray-100">
-              <h3 className="font-medium text-gray-900 mb-2">Voorbeeld offertenummer</h3>
-              <p className="text-gray-600 font-mono">END-2026-00124</p>
             </div>
 
             <div className="mt-8 pt-8 border-t border-gray-100">
@@ -237,7 +241,7 @@ export default function OfferteBekijkenPage() {
                 </div>
               </div>
 
-              {/* Quote details */}
+              {/* Quote description */}
               {quote.description && (
                 <div className="mb-8">
                   <h3 className="font-medium text-gray-900 mb-3">Offerte beschrijving</h3>
@@ -247,13 +251,68 @@ export default function OfferteBekijkenPage() {
                 </div>
               )}
 
-              {/* Price */}
-              {quote.totalAmount && (
+              {/* Line items table */}
+              {quote.lines.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="font-medium text-gray-900 mb-3">Producten & diensten</h3>
+                  <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="text-left py-3 px-4 font-medium text-gray-500">Product</th>
+                          <th className="text-left py-3 px-4 font-medium text-gray-500">Omschrijving</th>
+                          <th className="text-right py-3 px-4 font-medium text-gray-500">Aantal</th>
+                          <th className="text-right py-3 px-4 font-medium text-gray-500">Prijs/stuk</th>
+                          <th className="text-right py-3 px-4 font-medium text-gray-500">Totaal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {quote.lines.map((line, i) => (
+                          <tr key={i} className="border-t border-gray-100">
+                            <td className="py-3 px-4 text-gray-900 font-medium">{line.productName}</td>
+                            <td className="py-3 px-4 text-gray-600">{line.description || "—"}</td>
+                            <td className="py-3 px-4 text-right text-gray-900">{line.quantity}</td>
+                            <td className="py-3 px-4 text-right text-gray-900">€ {fmt(line.unitPrice)}</td>
+                            <td className="py-3 px-4 text-right text-gray-900 font-medium">€ {fmt(line.lineTotal)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Totals */}
+                  <div className="mt-4 flex justify-end">
+                    <div className="w-72 space-y-2 text-sm">
+                      <div className="flex justify-between py-1">
+                        <span className="text-gray-500">Subtotaal (excl. BTW)</span>
+                        <span className="text-gray-900">€ {fmt(subtotal)}</span>
+                      </div>
+                      <div className="flex justify-between py-1">
+                        <span className="text-gray-500">BTW ({btwPct}%)</span>
+                        <span className="text-gray-900">€ {fmt(btwAmount)}</span>
+                      </div>
+                      <div className="flex justify-between py-2 border-t border-gray-200 text-base">
+                        <span className="font-semibold text-gray-900">Totaal (incl. BTW)</span>
+                        <span className="font-bold text-[#2563EB]">€ {fmt(totalInclBtw)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {quote.validUntil && (
+                    <p className="text-sm text-gray-500 mt-3 text-right">
+                      Offerte geldig tot: {new Date(quote.validUntil).toLocaleDateString("nl-NL")}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Fallback: show old-style total if no lines */}
+              {quote.lines.length === 0 && quote.totalAmount && (
                 <div className="bg-[#2563EB]/5 rounded-xl p-6 mb-8">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">Totaalbedrag (incl. BTW)</span>
+                    <span className="text-gray-700 font-medium">Totaalbedrag</span>
                     <span className="text-3xl font-bold text-[#2563EB]">
-                      € {Number(quote.totalAmount).toLocaleString("nl-NL", { minimumFractionDigits: 2 })}
+                      € {fmt(Number(quote.totalAmount))}
                     </span>
                   </div>
                   {quote.validUntil && (

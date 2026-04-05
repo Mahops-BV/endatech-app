@@ -8,6 +8,27 @@ async function requireAdmin() {
   return session === process.env.ADMIN_SESSION_SECRET;
 }
 
+function serializeQuote(quote: Record<string, unknown>, lines: Record<string, unknown>[]) {
+  return {
+    ...quote,
+    totalAmount: quote.totalAmount ? Number(quote.totalAmount) : null,
+    btwPercentage: Number(quote.btwPercentage ?? 21),
+    validUntil: quote.validUntil ? (quote.validUntil as Date).toISOString() : null,
+    signedAt: quote.signedAt ? (quote.signedAt as Date).toISOString() : null,
+    createdAt: (quote.createdAt as Date).toISOString(),
+    updatedAt: (quote.updatedAt as Date).toISOString(),
+    lines: lines.map((l) => ({
+      id: l.id,
+      productName: l.productName,
+      description: l.description,
+      quantity: Number(l.quantity),
+      unitPrice: Number(l.unitPrice),
+      lineTotal: Number(l.lineTotal),
+      sortOrder: Number(l.sortOrder),
+    })),
+  };
+}
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ quoteNumber: string }> }
@@ -17,20 +38,17 @@ export async function GET(
   }
 
   const { quoteNumber } = await params;
-  const quote = await prisma.quote.findUnique({ where: { quoteNumber } });
+  const quote = await prisma.quote.findUnique({
+    where: { quoteNumber },
+    include: { lines: { orderBy: { sortOrder: "asc" } } },
+  });
 
   if (!quote) {
     return NextResponse.json({ error: "Offerte niet gevonden" }, { status: 404 });
   }
 
-  return NextResponse.json({
-    ...quote,
-    totalAmount: quote.totalAmount ? Number(quote.totalAmount) : null,
-    validUntil: quote.validUntil?.toISOString() ?? null,
-    signedAt: quote.signedAt?.toISOString() ?? null,
-    createdAt: quote.createdAt.toISOString(),
-    updatedAt: quote.updatedAt.toISOString(),
-  });
+  const { lines, ...rest } = quote;
+  return NextResponse.json(serializeQuote(rest as Record<string, unknown>, lines as unknown as Record<string, unknown>[]));
 }
 
 export async function PATCH(
@@ -44,11 +62,12 @@ export async function PATCH(
   const { quoteNumber } = await params;
   const body = await request.json();
 
-  const { description, totalAmount, validUntil, status } = body as {
+  const { description, validUntil, status, btwPercentage, lines } = body as {
     description?: string;
-    totalAmount?: number | null;
     validUntil?: string | null;
     status?: string;
+    btwPercentage?: number;
+    lines?: { productName: string; description?: string; quantity: number; unitPrice: number }[];
   };
 
   const quote = await prisma.quote.findUnique({ where: { quoteNumber } });
@@ -56,11 +75,18 @@ export async function PATCH(
     return NextResponse.json({ error: "Offerte niet gevonden" }, { status: 404 });
   }
 
+  // Calculate totals from lines if provided
+  let totalAmount: number | undefined;
+  if (lines !== undefined) {
+    totalAmount = lines.reduce((sum, l) => sum + l.quantity * l.unitPrice, 0);
+  }
+
   const updated = await prisma.quote.update({
     where: { quoteNumber },
     data: {
       ...(description !== undefined && { description: description || null }),
-      ...(totalAmount !== undefined && { totalAmount: totalAmount ?? null }),
+      ...(totalAmount !== undefined && { totalAmount }),
+      ...(btwPercentage !== undefined && { btwPercentage }),
       ...(validUntil !== undefined && {
         validUntil: validUntil ? new Date(validUntil) : null,
       }),
@@ -68,12 +94,28 @@ export async function PATCH(
     },
   });
 
-  return NextResponse.json({
-    ...updated,
-    totalAmount: updated.totalAmount ? Number(updated.totalAmount) : null,
-    validUntil: updated.validUntil?.toISOString() ?? null,
-    signedAt: updated.signedAt?.toISOString() ?? null,
-    createdAt: updated.createdAt.toISOString(),
-    updatedAt: updated.updatedAt.toISOString(),
+  // Replace lines if provided
+  if (lines !== undefined) {
+    await prisma.quoteLine.deleteMany({ where: { quoteId: quote.id } });
+    if (lines.length > 0) {
+      await prisma.quoteLine.createMany({
+        data: lines.map((l, i) => ({
+          quoteId: quote.id,
+          productName: l.productName,
+          description: l.description || null,
+          quantity: l.quantity,
+          unitPrice: l.unitPrice,
+          lineTotal: l.quantity * l.unitPrice,
+          sortOrder: i,
+        })),
+      });
+    }
+  }
+
+  const newLines = await prisma.quoteLine.findMany({
+    where: { quoteId: quote.id },
+    orderBy: { sortOrder: "asc" },
   });
+
+  return NextResponse.json(serializeQuote(updated as unknown as Record<string, unknown>, newLines as unknown as Record<string, unknown>[]));
 }

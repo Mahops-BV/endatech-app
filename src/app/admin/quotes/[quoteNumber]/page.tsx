@@ -4,6 +4,15 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface QuoteLine {
+  id?: string;
+  productName: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+
 interface Quote {
   quoteNumber: string;
   name: string;
@@ -17,6 +26,7 @@ interface Quote {
   notes: string | null;
   description: string | null;
   totalAmount: number | null;
+  btwPercentage: number;
   validUntil: string | null;
   signed: boolean;
   signedAt: string | null;
@@ -24,6 +34,7 @@ interface Quote {
   signedIp: string | null;
   status: string;
   createdAt: string;
+  lines: QuoteLine[];
 }
 
 const STATUSES = [
@@ -48,6 +59,8 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: "bg-red-100 text-red-800",
 };
 
+const EMPTY_LINE: QuoteLine = { productName: "", description: "", quantity: 1, unitPrice: 0, lineTotal: 0 };
+
 export default function AdminQuotePage() {
   const params = useParams();
   const router = useRouter();
@@ -61,9 +74,10 @@ export default function AdminQuotePage() {
 
   // Form state
   const [description, setDescription] = useState("");
-  const [totalAmount, setTotalAmount] = useState("");
   const [validUntil, setValidUntil] = useState("");
   const [status, setStatus] = useState("");
+  const [btwPercentage, setBtwPercentage] = useState(21);
+  const [lines, setLines] = useState<QuoteLine[]>([{ ...EMPTY_LINE }]);
 
   const fetchQuote = useCallback(async () => {
     try {
@@ -73,9 +87,10 @@ export default function AdminQuotePage() {
       const data: Quote = await res.json();
       setQuote(data);
       setDescription(data.description ?? "");
-      setTotalAmount(data.totalAmount != null ? String(data.totalAmount) : "");
       setValidUntil(data.validUntil ? data.validUntil.slice(0, 10) : "");
       setStatus(data.status);
+      setBtwPercentage(data.btwPercentage ?? 21);
+      setLines(data.lines.length > 0 ? data.lines : [{ ...EMPTY_LINE }]);
     } finally {
       setLoading(false);
     }
@@ -83,10 +98,37 @@ export default function AdminQuotePage() {
 
   useEffect(() => { fetchQuote(); }, [fetchQuote]);
 
+  // Line item helpers
+  function updateLine(index: number, field: keyof QuoteLine, value: string | number) {
+    setLines((prev) => {
+      const updated = [...prev];
+      const line = { ...updated[index], [field]: value };
+      line.lineTotal = line.quantity * line.unitPrice;
+      updated[index] = line;
+      return updated;
+    });
+  }
+
+  function addLine() {
+    setLines((prev) => [...prev, { ...EMPTY_LINE }]);
+  }
+
+  function removeLine(index: number) {
+    setLines((prev) => prev.length > 1 ? prev.filter((_, i) => i !== index) : prev);
+  }
+
+  // Totals
+  const subtotal = lines.reduce((sum, l) => sum + (l.quantity * l.unitPrice), 0);
+  const btwAmount = subtotal * (btwPercentage / 100);
+  const totalInclBtw = subtotal + btwAmount;
+
   async function handleSave() {
     setSaving(true);
     setSaved(false);
     setError("");
+
+    // Filter out empty lines
+    const filledLines = lines.filter((l) => l.productName.trim());
 
     try {
       const res = await fetch(`/api/admin/quotes/${quoteNumber}`, {
@@ -94,9 +136,15 @@ export default function AdminQuotePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           description: description || null,
-          totalAmount: totalAmount ? parseFloat(totalAmount) : null,
           validUntil: validUntil || null,
           status,
+          btwPercentage,
+          lines: filledLines.map((l) => ({
+            productName: l.productName,
+            description: l.description || undefined,
+            quantity: l.quantity,
+            unitPrice: l.unitPrice,
+          })),
         }),
       });
 
@@ -107,6 +155,7 @@ export default function AdminQuotePage() {
 
       const updated: Quote = await res.json();
       setQuote(updated);
+      setLines(updated.lines.length > 0 ? updated.lines : [{ ...EMPTY_LINE }]);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -132,7 +181,7 @@ export default function AdminQuotePage() {
     <div className="min-h-screen bg-gray-50">
       {/* Top bar */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
           <Link href="/admin" className="text-gray-400 hover:text-gray-600 transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -145,7 +194,7 @@ export default function AdminQuotePage() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
           {/* Customer info */}
           <div className="bg-white rounded-xl border border-gray-100 p-6">
@@ -177,9 +226,9 @@ export default function AdminQuotePage() {
             </p>
           </div>
 
-          {/* Edit form */}
+          {/* Settings */}
           <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h2 className="font-semibold text-gray-900 mb-4">Offerte bewerken</h2>
+            <h2 className="font-semibold text-gray-900 mb-4">Offerte-instellingen</h2>
 
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
@@ -201,34 +250,31 @@ export default function AdminQuotePage() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Totaalbedrag (incl. BTW)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-gray-400 text-sm">€</span>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Geldig tot</label>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={totalAmount}
-                    onChange={(e) => setTotalAmount(e.target.value)}
-                    className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
-                    placeholder="0.00"
+                    type="date"
+                    value={validUntil}
+                    onChange={(e) => setValidUntil(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Geldig tot
-                </label>
-                <input
-                  type="date"
-                  value={validUntil}
-                  onChange={(e) => setValidUntil(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">BTW-percentage</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={btwPercentage}
+                      onChange={(e) => setBtwPercentage(Number(e.target.value))}
+                      className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                    />
+                    <span className="absolute right-3 top-2.5 text-gray-400 text-sm">%</span>
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -238,21 +284,133 @@ export default function AdminQuotePage() {
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={6}
+                  rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none resize-none"
-                  placeholder="Omschrijving van de offerte, producten, installatie..."
+                  placeholder="Algemene omschrijving van de offerte..."
                 />
               </div>
-
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full py-2.5 bg-[#2563EB] text-white font-semibold rounded-lg hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 text-sm"
-              >
-                {saving ? "Opslaan..." : saved ? "Opgeslagen!" : "Opslaan"}
-              </button>
             </div>
           </div>
+        </div>
+
+        {/* Line items table */}
+        <div className="bg-white rounded-xl border border-gray-100 p-6">
+          <h2 className="font-semibold text-gray-900 mb-4">Producten & diensten</h2>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-2 pr-2 font-medium text-gray-500 w-[28%]">Product</th>
+                  <th className="text-left py-2 pr-2 font-medium text-gray-500 w-[28%]">Omschrijving</th>
+                  <th className="text-right py-2 pr-2 font-medium text-gray-500 w-[10%]">Aantal</th>
+                  <th className="text-right py-2 pr-2 font-medium text-gray-500 w-[14%]">Prijs/stuk</th>
+                  <th className="text-right py-2 pr-2 font-medium text-gray-500 w-[14%]">Totaal</th>
+                  <th className="w-[6%]"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {lines.map((line, i) => (
+                  <tr key={i} className="border-b border-gray-100">
+                    <td className="py-2 pr-2">
+                      <input
+                        type="text"
+                        value={line.productName}
+                        onChange={(e) => updateLine(i, "productName", e.target.value)}
+                        placeholder="Productnaam"
+                        className="w-full px-2 py-1.5 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                      />
+                    </td>
+                    <td className="py-2 pr-2">
+                      <input
+                        type="text"
+                        value={line.description}
+                        onChange={(e) => updateLine(i, "description", e.target.value)}
+                        placeholder="Omschrijving"
+                        className="w-full px-2 py-1.5 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                      />
+                    </td>
+                    <td className="py-2 pr-2">
+                      <input
+                        type="number"
+                        min="1"
+                        value={line.quantity}
+                        onChange={(e) => updateLine(i, "quantity", Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-full px-2 py-1.5 border border-gray-200 rounded text-sm text-right focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                      />
+                    </td>
+                    <td className="py-2 pr-2">
+                      <div className="relative">
+                        <span className="absolute left-2 top-2 text-gray-400 text-xs">€</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={line.unitPrice || ""}
+                          onChange={(e) => updateLine(i, "unitPrice", parseFloat(e.target.value) || 0)}
+                          placeholder="0.00"
+                          className="w-full pl-5 pr-2 py-1.5 border border-gray-200 rounded text-sm text-right focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                        />
+                      </div>
+                    </td>
+                    <td className="py-2 pr-2 text-right font-medium text-gray-900">
+                      € {(line.quantity * line.unitPrice).toFixed(2)}
+                    </td>
+                    <td className="py-2 text-center">
+                      <button
+                        onClick={() => removeLine(i)}
+                        className="text-gray-300 hover:text-red-500 transition-colors"
+                        title="Verwijderen"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <button
+            onClick={addLine}
+            className="mt-3 text-sm text-[#2563EB] hover:text-[#1d4ed8] font-medium flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Regel toevoegen
+          </button>
+
+          {/* Totals */}
+          <div className="mt-6 pt-4 border-t border-gray-200 flex justify-end">
+            <div className="w-72 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Subtotaal (excl. BTW)</span>
+                <span className="font-medium text-gray-900">€ {subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">BTW ({btwPercentage}%)</span>
+                <span className="font-medium text-gray-900">€ {btwAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between pt-2 border-t border-gray-200 text-base">
+                <span className="font-semibold text-gray-900">Totaal (incl. BTW)</span>
+                <span className="font-bold text-gray-900">€ {totalInclBtw.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Save button */}
+        <div className="flex justify-end">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-8 py-2.5 bg-[#2563EB] text-white font-semibold rounded-lg hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 text-sm"
+          >
+            {saving ? "Opslaan..." : saved ? "Opgeslagen!" : "Opslaan"}
+          </button>
         </div>
 
         {/* Signature */}

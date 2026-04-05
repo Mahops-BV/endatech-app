@@ -10,6 +10,7 @@ export async function GET(
 
     const quote = await prisma.quote.findUnique({
       where: { quoteNumber },
+      include: { lines: { orderBy: { sortOrder: "asc" } } },
     });
 
     if (!quote) {
@@ -38,10 +39,18 @@ export async function GET(
       rooms: quote.rooms,
       description: quote.description,
       totalAmount: quote.totalAmount ? Number(quote.totalAmount) : null,
+      btwPercentage: Number(quote.btwPercentage ?? 21),
       validUntil: quote.validUntil?.toISOString() || null,
       status: quote.status === "SENT" ? "VIEWED" : quote.status,
       signed: quote.signed,
       signedAt: quote.signedAt?.toISOString() || null,
+      lines: quote.lines.map((l: { productName: string; description: string | null; quantity: number; unitPrice: unknown; lineTotal: unknown }) => ({
+        productName: l.productName,
+        description: l.description,
+        quantity: l.quantity,
+        unitPrice: Number(l.unitPrice),
+        lineTotal: Number(l.lineTotal),
+      })),
     });
   } catch (error) {
     console.error("Error fetching quote:", error);

@@ -26,9 +26,13 @@ model Quote {
 
   // Quote details
   description     String?     // Quote description/content
-  totalAmount     Decimal?    // Total price
+  totalAmount     Decimal?    // Total price excl. BTW (auto-calculated)
+  btwPercentage   Decimal     @default(21) // BTW percentage
   validUntil      DateTime?   // Quote validity date
   pdfUrl          String?     // Generated PDF URL
+
+  // Line items
+  lines           QuoteLine[]
 
   // Signature
   signed          Boolean     @default(false)
@@ -43,6 +47,21 @@ model Quote {
   // Timestamps
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+}
+
+model QuoteLine {
+  id            String   @id @default(cuid())
+  quoteId       String
+  quote         Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  productName   String
+  description   String?
+  quantity      Int
+  unitPrice     Decimal
+  lineTotal     Decimal  // quantity * unitPrice
+
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
 }
 
 model ContactRequest {
