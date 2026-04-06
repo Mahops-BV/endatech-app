@@ -40,16 +40,16 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Mitsubishi Heavy", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-heavy-premium.jpg" },
   { brand: "Mitsubishi Heavy", match: (_, t) => t === "Buitenunit", image: "/products/gree-buitenunit.png" },
 
-  // === MITSUBISHI ELECTRIC (from mitsubishi-les.com Belgium) ===
-  { brand: "Mitsubishi Electric", match: (_, __, m) => m.includes("MSZ-LN"), image: "/products/mitsubishi-electric-msz-ln.jpg" },
+  // === MITSUBISHI ELECTRIC (packshots from les.mitsubishielectric.co.uk + aero-airco.be) ===
+  { brand: "Mitsubishi Electric", match: (_, __, m) => m.includes("MSZ-LN"), image: "/products/mitsubishi-electric-msz-ln.png" },
   { brand: "Mitsubishi Electric", match: (_, __, m) => m.includes("MSZ-EF"), image: "/products/mitsubishi-electric-msz-ef.jpg" },
-  { brand: "Mitsubishi Electric", match: (_, t) => t === "Wand", image: "/products/mitsubishi-electric-msz-ap.jpg" },
+  { brand: "Mitsubishi Electric", match: (_, t) => t === "Wand", image: "/products/mitsubishi-electric-msz-ap.png" },
   { brand: "Mitsubishi Electric", match: (_, t) => t === "Cassette", image: "/products/gree-cassette.png" },
-  { brand: "Mitsubishi Electric", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-electric-msz-ap.jpg" },
+  { brand: "Mitsubishi Electric", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-electric-msz-ap.png" },
   { brand: "Mitsubishi Electric", match: (_, t) => t === "Buitenunit", image: "/products/gree-buitenunit.png" },
 
-  // === MITSUI (from aircobeurs.nl) ===
-  { brand: "Mitsui", match: (_, t) => t === "Wand", image: "/products/mitsui-wand.jpg" },
+  // === MITSUI (from solardeal.nl) ===
+  { brand: "Mitsui", match: (_, t) => t === "Wand", image: "/products/mitsui-wand.png" },
   { brand: "Mitsui", match: (_, t) => t === "Cassette", image: "/products/mitsui-commercieel.jpg" },
   { brand: "Mitsui", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsui-commercieel.jpg" },
   { brand: "Mitsui", match: (_, t) => t === "Kolom", image: "/products/mitsui-commercieel.jpg" },
