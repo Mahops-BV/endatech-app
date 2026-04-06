@@ -17,6 +17,54 @@ interface AircoModel {
   imageUrl: string | null;
 }
 
+const TYPE_ICONS: Record<string, React.ReactNode> = {
+  "Wand": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zm0 9.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6z" />
+    </svg>
+  ),
+  "Vloer": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+    </svg>
+  ),
+  "Vloer/Plafond": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+    </svg>
+  ),
+  "Console": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />
+    </svg>
+  ),
+  "Cassette": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+    </svg>
+  ),
+  "Kanaal": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+    </svg>
+  ),
+  "Buitenunit": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" />
+    </svg>
+  ),
+  "Dakairco": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5M10.5 21H3m1.5 0h2.25m0 0V3.545M5.25 3.545l6.75-2.795 6.75 2.795" />
+    </svg>
+  ),
+  "Kolom": (
+    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M6 21V6.75m12 0V21M6 6.75h12M6 6.75L12 3l6 3.75" />
+    </svg>
+  ),
+};
+
 const ENERGY_LABEL_COLORS: Record<string, string> = {
   "A+++": "bg-green-600 text-white",
   "A++": "bg-green-500 text-white",
@@ -114,8 +162,66 @@ export default function ProductenPage() {
         </div>
       </section>
 
+      {/* Categorie kiezer */}
+      {!loading && (
+        <section className="py-10 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-5">Kies een categorie</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {/* Alle */}
+              <button
+                onClick={() => { setFilterType("ALL"); window.scrollTo({ top: document.getElementById("producten-grid")?.offsetTop ?? 0, behavior: "smooth" }); }}
+                className={`flex flex-col items-center gap-2.5 p-4 rounded-xl border-2 transition-all text-center ${
+                  filterType === "ALL"
+                    ? "border-[#2563EB] bg-[#2563EB]/5 shadow-sm"
+                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <div className={`${filterType === "ALL" ? "text-[#2563EB]" : "text-gray-400"}`}>
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zm0 9.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className={`text-sm font-semibold ${filterType === "ALL" ? "text-[#2563EB]" : "text-gray-900"}`}>Alles</p>
+                  <p className="text-xs text-gray-400">{models.filter((m) => filterBrand === "ALL" || m.brand === filterBrand).length}</p>
+                </div>
+              </button>
+
+              {types.map((t) => {
+                const count = models.filter((m) => m.type === t && (filterBrand === "ALL" || m.brand === filterBrand)).length;
+                if (count === 0) return null;
+                return (
+                  <button
+                    key={t}
+                    onClick={() => { setFilterType(t); window.scrollTo({ top: document.getElementById("producten-grid")?.offsetTop ?? 0, behavior: "smooth" }); }}
+                    className={`flex flex-col items-center gap-2.5 p-4 rounded-xl border-2 transition-all text-center ${
+                      filterType === t
+                        ? "border-[#2563EB] bg-[#2563EB]/5 shadow-sm"
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    <div className={`${filterType === t ? "text-[#2563EB]" : "text-gray-400"}`}>
+                      {TYPE_ICONS[t] || (
+                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                      )}
+                    </div>
+                    <div>
+                      <p className={`text-sm font-semibold ${filterType === t ? "text-[#2563EB]" : "text-gray-900"}`}>{TYPE_LABELS[t] || t}</p>
+                      <p className="text-xs text-gray-400">{count} model{count !== 1 ? "len" : ""}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Filters & Toggle */}
-      <section className="py-8 bg-white border-b border-gray-100">
+      <section className="py-4 bg-white border-b border-gray-100 sticky top-[80px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             {/* Filters */}
@@ -132,17 +238,18 @@ export default function ProductenPage() {
                 ))}
               </select>
 
-              {/* Type filter */}
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
-              >
-                <option value="ALL">Alle types</option>
-                {types.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
+              {/* Active filter indicator */}
+              {filterType !== "ALL" && (
+                <button
+                  onClick={() => setFilterType("ALL")}
+                  className="flex items-center gap-1.5 bg-[#2563EB]/10 text-[#2563EB] px-3 py-2 rounded-lg text-sm font-medium hover:bg-[#2563EB]/20 transition-colors"
+                >
+                  {TYPE_LABELS[filterType] || filterType}
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
             </div>
 
             {/* Montage toggle */}
@@ -172,7 +279,7 @@ export default function ProductenPage() {
       </section>
 
       {/* Products Grid */}
-      <section className="py-12 bg-gray-50">
+      <section id="producten-grid" className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="text-center py-16">
