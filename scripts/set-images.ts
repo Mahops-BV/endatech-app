@@ -22,13 +22,13 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   // Fallback Gree wand (Free Match indoor wand units)
   { brand: "Gree", match: (_, t) => t === "Wand", image: "/products/gree-clivia.png" },
 
-  // === DAIKIN (from nettion.nl official packshots) ===
-  { brand: "Daikin", match: (_, __, m) => m.includes("Stylish"), image: "/products/daikin-stylish.webp" },
-  { brand: "Daikin", match: (_, __, m) => m.includes("Emura"), image: "/products/daikin-emura.webp" },
-  { brand: "Daikin", match: (_, __, m) => m.includes("Perfera Vloer"), image: "/products/daikin-perfera.webp" },
-  { brand: "Daikin", match: (_, __, m) => m.includes("Perfera"), image: "/products/daikin-perfera.webp" },
-  { brand: "Daikin", match: (_, __, m) => m.includes("Ururu"), image: "/products/daikin-ururu-sarara.webp" },
-  { brand: "Daikin", match: (_, __, m) => m.includes("Comfora"), image: "/products/daikin-comfora.webp" },
+  // === DAIKIN (from daikin-ce.com official DAM packshots 1280px) ===
+  { brand: "Daikin", match: (_, __, m) => m.includes("Stylish"), image: "/products/daikin-stylish.jpg" },
+  { brand: "Daikin", match: (_, __, m) => m.includes("Emura"), image: "/products/daikin-emura.jpg" },
+  { brand: "Daikin", match: (_, __, m) => m.includes("Perfera Vloer"), image: "/products/daikin-perfera-vloer.jpg" },
+  { brand: "Daikin", match: (_, __, m) => m.includes("Perfera"), image: "/products/daikin-perfera.jpg" },
+  { brand: "Daikin", match: (_, __, m) => m.includes("Ururu"), image: "/products/daikin-ururu-sarara.jpg" },
+  { brand: "Daikin", match: (_, __, m) => m.includes("Comfora"), image: "/products/daikin-comfora.jpg" },
 
   // === LG (from btmalta.com) ===
   { brand: "LG", match: () => true, image: "/products/lg-wand.png" },
