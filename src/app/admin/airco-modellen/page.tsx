@@ -15,7 +15,7 @@ const BRANDS = [
   "Mitsui",
 ];
 
-const TYPES = ["Wand", "Console", "Cassette", "Kanaal", "Vloer/Plafond", "Vloer", "Buitenunit", "Dakairco", "Kolom"];
+const TYPES = ["Wand", "Vloer & Plafond", "Cassette", "Buitenunit", "Dakairco", "Kolom"];
 
 const ENERGY_LABELS = ["A+++", "A++", "A+", "A", "B", "C"];
 
