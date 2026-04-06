@@ -91,9 +91,9 @@ function getSeriesName(brand: string, model: string, desc: string | null): strin
   const parts = (desc || "").split("|").map((p) => p.trim());
   const productlijn = parts[0] || "";
 
-  // Daikin: productlijn is generic "Wand Split", use second segment for real series
-  if (brand === "Daikin" && parts[1]) {
-    return parts[1].replace(/Serie:\s*/, "").trim();
+  // Daikin: use first segment (Comfora, Emura, Stylish, etc.)
+  if (brand === "Daikin") {
+    return productlijn;
   }
 
   // ME: "RAC residentieel" groups different series, use model name instead
