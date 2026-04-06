@@ -11,11 +11,11 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   // === GREE (from greebelgium.be + aircobeurs.nl) ===
   { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand" && d.includes("antraciet"), image: "/products/gree-fairy-zwart.jpg" },
   { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand" && d.includes("zilver"), image: "/products/gree-fairy-zilver.jpg" },
-  { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand", image: "/products/gree-fairy.jpg" },
+  { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand", image: "/products/gree-fairy.png" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand" && d.includes("antraciet"), image: "/products/gree-clivia-zwart.png" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand" && d.includes("zilver"), image: "/products/gree-fairy-zilver.jpg" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand", image: "/products/gree-clivia.png" },
-  { brand: "Gree", match: (d, t) => d.includes("Airy") && t === "Wand", image: "/products/gree-airy.webp" },
+  { brand: "Gree", match: (d, t) => d.includes("Airy") && t === "Wand", image: "/products/gree-airy.png" },
   { brand: "Gree", match: (d, t) => d.includes("Charmo") && t === "Wand", image: "/products/gree-charmo.png" },
   { brand: "Gree", match: (_, t) => t === "Console", image: "/products/gree-console.png" },
   { brand: "Gree", match: (_, t) => t === "Cassette", image: "/products/gree-cassette.png" },
@@ -24,7 +24,7 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Gree", match: (_, t) => t === "Buitenunit", image: "/products/gree-buitenunit.png" },
   { brand: "Gree", match: (_, t) => t === "Dakairco", image: "/products/gree-dakairco.jpg" },
   // Fallback Gree wand (Free Match indoor wand units)
-  { brand: "Gree", match: (_, t) => t === "Wand", image: "/products/gree-clivia.png" },
+  { brand: "Gree", match: (_, t) => t === "Wand", image: "/products/gree-fairy.png" },
 
   // === DAIKIN (from daikin-ce.com official DAM packshots 1280px) ===
   { brand: "Daikin", match: (_, __, m) => m === "Stylish FTXA-BB", image: "/products/daikin-stylish-zwart.jpg" },
