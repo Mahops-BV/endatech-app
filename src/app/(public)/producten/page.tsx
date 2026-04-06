@@ -172,12 +172,6 @@ function SeriesCard({ group, inclMontage }: { group: SeriesGroup; inclMontage: b
               ))}
             </div>
           </div>
-        ) : !selected.coolingCapacity && selected.description?.includes("kW bereik") ? (
-          <div className="mb-4">
-            <span className="inline-block bg-[#22D3EE]/10 text-[#0891B2] px-3 py-1.5 rounded-lg text-sm font-medium">
-              {selected.description.match(/[\d.,]+-[\d.,]+ kW/)?.[0] || ""} bereik
-            </span>
-          </div>
         ) : null}
 
         {/* Specs */}
