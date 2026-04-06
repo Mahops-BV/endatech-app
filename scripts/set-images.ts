@@ -14,7 +14,7 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand", image: "/products/gree-fairy.png" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand" && d.includes("antraciet"), image: "/products/gree-clivia-zwart.png" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand" && d.includes("zilver"), image: "/products/gree-fairy-zilver.jpg" },
-  { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand", image: "/products/gree-clivia.png" },
+  { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand", image: "/products/gree-clivia-wit.png" },
   { brand: "Gree", match: (d, t) => d.includes("Airy") && t === "Wand", image: "/products/gree-airy.png" },
   { brand: "Gree", match: (d, t) => d.includes("Charmo") && t === "Wand", image: "/products/gree-charmo.png" },
   { brand: "Gree", match: (_, t) => t === "Console", image: "/products/gree-console.png" },
@@ -27,17 +27,21 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Gree", match: (_, t) => t === "Wand", image: "/products/gree-fairy.png" },
 
   // === DAIKIN (from daikin-ce.com official DAM packshots 1280px) ===
-  { brand: "Daikin", match: (_, __, m) => m === "Stylish FTXA-BB", image: "/products/daikin-stylish-zwart.jpg" },
-  { brand: "Daikin", match: (_, __, m) => m === "Stylish FTXA-BS", image: "/products/daikin-stylish-zilver.jpg" },
-  { brand: "Daikin", match: (_, __, m) => m === "Stylish FTXA-BT", image: "/products/daikin-stylish-zwarthout.jpg" },
-  { brand: "Daikin", match: (_, __, m) => m.includes("Stylish"), image: "/products/daikin-stylish.jpg" },
+  { brand: "Daikin", match: (d) => d.includes("Stylish") && d.includes("Kleur: zwart hout"), image: "/products/daikin-stylish-zwarthout.jpg" },
+  { brand: "Daikin", match: (d) => d.includes("Stylish") && d.includes("Kleur: zwart"), image: "/products/daikin-stylish-zwart.jpg" },
+  { brand: "Daikin", match: (d) => d.includes("Stylish") && d.includes("Kleur: zilver"), image: "/products/daikin-stylish-zilver.jpg" },
+  { brand: "Daikin", match: (d) => d.includes("Stylish"), image: "/products/daikin-stylish.jpg" },
   { brand: "Daikin", match: (_, __, m) => m.includes("Emura"), image: "/products/daikin-emura.jpg" },
   { brand: "Daikin", match: (_, __, m) => m.includes("Perfera Vloer"), image: "/products/daikin-perfera-vloer.jpg" },
   { brand: "Daikin", match: (_, __, m) => m.includes("Perfera"), image: "/products/daikin-perfera.jpg" },
   { brand: "Daikin", match: (_, __, m) => m.includes("Ururu"), image: "/products/daikin-ururu-sarara.jpg" },
   { brand: "Daikin", match: (_, __, m) => m.includes("Comfora"), image: "/products/daikin-comfora.jpg" },
 
-  // === LG (from klimaat-shop.nl) ===
+  // === LG (from lgklimaat.nl + chillair.nl) ===
+  { brand: "LG", match: (d) => d.includes("ARTCOOL Gallery"), image: "/products/lg-gallery.jpg" },
+  { brand: "LG", match: (d) => d.includes("DUALCOOL Deluxe"), image: "/products/lg-deluxe.jpg" },
+  { brand: "LG", match: (d) => d.includes("DUALCOOL Premium+"), image: "/products/lg-premiumplus.jpg" },
+  { brand: "LG", match: (d) => d.includes("DUALCOOL Premium"), image: "/products/lg-premium.jpg" },
   { brand: "LG", match: () => true, image: "/products/lg-wand.jpg" },
 
   // === MITSUBISHI HEAVY (from mhinederland.nl + airco-kopen.nu) ===
