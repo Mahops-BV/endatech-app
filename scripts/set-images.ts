@@ -55,7 +55,11 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Mitsubishi Electric", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-electric-msz-ap.png" },
   { brand: "Mitsubishi Electric", match: (_, t) => t === "Buitenunit", image: "/products/mitsubishi-electric-buitenunit.jpg" },
 
-  // === MITSUI (from solardeal.nl) ===
+  // === MITSUI (from goedkoopaircos.nl + technim.nl + solardeal.nl) ===
+  { brand: "Mitsui", match: (d, t) => t === "Wand" && d.includes("CDX Dynamic"), image: "/products/mitsui-cdx.jpg" },
+  { brand: "Mitsui", match: (d, t) => t === "Wand" && d.includes("ZDX Dynamic"), image: "/products/mitsui-zdx.jpg" },
+  { brand: "Mitsui", match: (d, t) => t === "Wand" && d.includes("MTX Trend"), image: "/products/mitsui-wand.png" },
+  { brand: "Mitsui", match: (d, t) => t === "Wand" && d.includes("Monobloc"), image: "/products/mitsui-wand.png" },
   { brand: "Mitsui", match: (_, t) => t === "Wand", image: "/products/mitsui-wand.png" },
   { brand: "Mitsui", match: (_, t) => t === "Cassette", image: "/products/mitsui-commercieel.jpg" },
   { brand: "Mitsui", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsui-commercieel.jpg" },
