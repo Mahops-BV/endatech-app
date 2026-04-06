@@ -44,7 +44,7 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Mitsubishi Heavy", match: (d, t) => t === "Wand" && d.includes("Diamond"), image: "/products/mitsubishi-heavy-wand.png" },
   { brand: "Mitsubishi Heavy", match: (d, t) => t === "Wand" && d.includes("Premium"), image: "/products/mitsubishi-heavy-premium.jpg" },
   { brand: "Mitsubishi Heavy", match: (_, t) => t === "Wand", image: "/products/mitsubishi-heavy-wand.png" },
-  { brand: "Mitsubishi Heavy", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-heavy-premium.jpg" },
+  { brand: "Mitsubishi Heavy", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-heavy-vloer.webp" },
   { brand: "Mitsubishi Heavy", match: (_, t) => t === "Buitenunit", image: "/products/mitsubishi-heavy-buitenunit.png" },
 
   // === MITSUBISHI ELECTRIC (packshots from les.mitsubishielectric.co.uk + aero-airco.be) ===
@@ -52,7 +52,7 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Mitsubishi Electric", match: (_, __, m) => m.includes("MSZ-EF"), image: "/products/mitsubishi-electric-msz-ef.jpg" },
   { brand: "Mitsubishi Electric", match: (_, t) => t === "Wand", image: "/products/mitsubishi-electric-msz-ap.png" },
   { brand: "Mitsubishi Electric", match: (_, t) => t === "Cassette", image: "/products/gree-cassette.png" },
-  { brand: "Mitsubishi Electric", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-electric-msz-ap.png" },
+  { brand: "Mitsubishi Electric", match: (_, t) => t === "Vloer & Plafond", image: "/products/mitsubishi-electric-vloer.jpg" },
   { brand: "Mitsubishi Electric", match: (_, t) => t === "Buitenunit", image: "/products/mitsubishi-electric-buitenunit.jpg" },
 
   // === MITSUI (from goedkoopaircos.nl + technim.nl + solardeal.nl) ===
