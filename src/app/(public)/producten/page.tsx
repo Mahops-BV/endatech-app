@@ -119,10 +119,18 @@ function SeriesCard({ group, inclMontage }: { group: SeriesGroup; inclMontage: b
   const [selectedCap, setSelectedCap] = useState(group.capacities[0] || "");
   const [selectedColor, setSelectedColor] = useState(group.colors[0] || "");
 
+  // Colors available for selected capacity
+  const availableColors = group.colors.filter((color) =>
+    group.variants.some((v) => v.coolingCapacity === selectedCap && getColor(v.description) === color)
+  );
+
+  // Auto-reset color if not available at selected kW
+  const effectiveColor = availableColors.includes(selectedColor) ? selectedColor : (availableColors[0] || "");
+
   // Find the variant matching selected capacity + color
   const selected = group.variants.find((v) => {
     const capMatch = !selectedCap || v.coolingCapacity === selectedCap;
-    const colorMatch = !selectedColor || getColor(v.description) === selectedColor;
+    const colorMatch = !effectiveColor || getColor(v.description) === effectiveColor;
     return capMatch && colorMatch;
   }) || group.variants.find((v) => v.coolingCapacity === selectedCap) || group.variants[0];
 
@@ -198,22 +206,26 @@ function SeriesCard({ group, inclMontage }: { group: SeriesGroup; inclMontage: b
         )}
 
         {/* Kleur selector */}
-        {group.colors.length > 1 && (
+        {group.colors.length > 1 && availableColors.length > 0 && (
           <div className="mb-3">
             <p className="text-xs font-medium text-gray-500 mb-2">Kleur</p>
             <div className="flex flex-wrap gap-2">
               {group.colors.map((color) => {
                 const cd = COLOR_DISPLAY[color] || { label: color, css: "bg-gray-200 border-gray-300" };
+                const available = availableColors.includes(color);
                 return (
                   <button
                     key={color}
-                    onClick={() => setSelectedColor(color)}
+                    onClick={() => available && setSelectedColor(color)}
+                    disabled={!available}
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                      selectedColor === color
+                      !available
+                        ? "opacity-30 cursor-not-allowed"
+                        : effectiveColor === color
                         ? "ring-2 ring-[#2563EB] ring-offset-1"
                         : "hover:bg-gray-50"
                     }`}
-                    title={cd.label}
+                    title={available ? cd.label : `${cd.label} (niet beschikbaar bij ${selectedCap})`}
                   >
                     <span className={`w-4 h-4 rounded-full border ${cd.css}`} />
                     <span className="text-gray-700">{cd.label}</span>
