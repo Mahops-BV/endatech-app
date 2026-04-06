@@ -71,8 +71,27 @@ const TYPE_LABELS: Record<string, string> = {
   "Dakairco": "Dakairco\u2019s",
 };
 
-function getSeriesName(desc: string | null): string {
-  return (desc || "").split("|")[0].trim() || "Overig";
+function getSeriesName(brand: string, model: string, desc: string | null): string {
+  const parts = (desc || "").split("|").map((p) => p.trim());
+  const productlijn = parts[0] || "";
+
+  // Daikin: productlijn is generic "Wand Split", use second segment for real series
+  if (brand === "Daikin" && parts[1]) {
+    return parts[1].replace(/Serie:\s*/, "").trim();
+  }
+
+  // ME: "RAC residentieel" groups different series, use model name instead
+  if (brand === "Mitsubishi Electric" && productlijn === "RAC residentieel") {
+    return model;
+  }
+
+  // ME: "Multi Split" buitenunits - group by Serie tag
+  if (brand === "Mitsubishi Electric" && productlijn === "Multi Split") {
+    const serie = parts.find((p) => p.startsWith("Serie:"));
+    return serie ? serie.replace("Serie:", "").trim() : productlijn;
+  }
+
+  return productlijn || "Overig";
 }
 
 function parseKw(cap: string | null): number {
@@ -239,7 +258,7 @@ export default function ProductenPage() {
     const groupMap = new Map<string, SeriesGroup>();
 
     for (const m of models) {
-      const seriesName = getSeriesName(m.description);
+      const seriesName = getSeriesName(m.brand, m.model, m.description);
       const key = `${m.brand}::${seriesName}::${m.type}`;
 
       if (!groupMap.has(key)) {
@@ -259,6 +278,8 @@ export default function ProductenPage() {
 
       // Skip duplicate capacities (color variants at same kW)
       if (cap && group.capacities.includes(cap)) continue;
+      // For products without kW: skip if we already have one in this group
+      if (!cap && group.variants.length > 0 && !group.variants[0].coolingCapacity) continue;
 
       group.variants.push(m);
       if (cap) group.capacities.push(cap);
