@@ -11,7 +11,7 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   // === GREE (from greebelgium.be + aircobeurs.nl) ===
   { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand" && d.includes("antraciet"), image: "/products/gree-fairy-zwart.jpg" },
   { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand" && d.includes("zilver"), image: "/products/gree-fairy-zilver.jpg" },
-  { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand", image: "/products/gree-fairy.png" },
+  { brand: "Gree", match: (d, t) => d.includes("Fairy") && t === "Wand", image: "/products/gree-fairy.jpg" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand" && d.includes("antraciet"), image: "/products/gree-clivia-antraciet.jpg" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand" && d.includes("zilver"), image: "/products/gree-clivia-zilver.jpg" },
   { brand: "Gree", match: (d, t) => d.includes("Clivia") && t === "Wand", image: "/products/gree-clivia-wit.jpg" },
@@ -23,8 +23,8 @@ const IMAGE_RULES: { brand: string; match: (desc: string, type: string, model: s
   { brand: "Gree", match: (_, t) => t === "Vloer & Plafond", image: "/products/gree-vloerplafond.png" },
   { brand: "Gree", match: (_, t) => t === "Buitenunit", image: "/products/gree-buitenunit.png" },
   { brand: "Gree", match: (_, t) => t === "Dakairco", image: "/products/gree-dakairco.jpg" },
-  // Fallback Gree wand (Free Match indoor wand units)
-  { brand: "Gree", match: (_, t) => t === "Wand", image: "/products/gree-fairy.png" },
+  // Fallback Gree wand
+  { brand: "Gree", match: (_, t) => t === "Wand", image: "/products/gree-fairy.jpg" },
 
   // === DAIKIN (from daikin-ce.com official DAM packshots 1280px) ===
   { brand: "Daikin", match: (d) => d.includes("Stylish") && d.includes("Kleur: zwart hout"), image: "/products/daikin-stylish-zwarthout.jpg" },
