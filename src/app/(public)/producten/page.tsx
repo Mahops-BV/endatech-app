@@ -326,7 +326,17 @@ export default function ProductenPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const brands = [...new Set(models.map((m) => m.brand))].sort();
+  const BRAND_ORDER: Record<string, number> = {
+    "Mitsubishi Heavy": 0,
+    "Mitsubishi Electric": 1,
+    "Daikin": 2,
+    "Gree": 3,
+    "LG": 4,
+    "Mitsui": 5,
+  };
+  const brands = [...new Set(models.map((m) => m.brand))].sort(
+    (a, b) => (BRAND_ORDER[a] ?? 99) - (BRAND_ORDER[b] ?? 99)
+  );
   const types = [...new Set(models.map((m) => m.type))].sort(
     (a, b) => (TYPE_ORDER[a] ?? 99) - (TYPE_ORDER[b] ?? 99)
   );
@@ -388,7 +398,12 @@ export default function ProductenPage() {
     for (const t of sortedTypes) {
       if (seen.has(t)) continue;
       seen.add(t);
-      typeGroups.push({ type: t, series: filtered.filter((g) => g.type === t) });
+      typeGroups.push({
+        type: t,
+        series: filtered.filter((g) => g.type === t).sort(
+          (a, b) => (BRAND_ORDER[a.brand] ?? 99) - (BRAND_ORDER[b.brand] ?? 99)
+        ),
+      });
     }
     return typeGroups;
   }, [filtered]);
