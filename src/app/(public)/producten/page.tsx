@@ -145,7 +145,7 @@ function SeriesCard({ group, inclMontage }: { group: SeriesGroup; inclMontage: b
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
       {/* Image - clickable */}
-      <Link href={`/producten/${selected.id}`} className="block aspect-square bg-[#F0FAFE] relative overflow-hidden cursor-pointer">
+      <Link href={`/producten/${selected.id}`} className="block aspect-square bg-transparent relative overflow-hidden cursor-pointer">
         {selected.imageUrl ? (
           <img
             src={selected.imageUrl}
@@ -526,7 +526,7 @@ export default function ProductenPage() {
       </section>
 
       {/* Products Grid */}
-      <section id="producten-grid" className="py-12 bg-gray-50">
+      <section id="producten-grid" className="py-12 bg-[#F0FAFE]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="text-center py-16">
