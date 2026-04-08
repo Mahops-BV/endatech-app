@@ -42,7 +42,8 @@ interface QuoteData {
 
 // ── EndaTech huisstijl kleuren ──
 const BRAND_RED = "#CC0000";
-const BRAND_BLUE = "#0066CC";
+const BRAND_BLUE = "#2196F3";       // lichtblauw uit logo/huisstijl
+const BRAND_BLUE_DARK = "#0066CC";  // donkerder blauw voor tekst
 const BRAND_DARK = "#1a1a2e";
 const BRAND_LIGHT_BLUE = "#e8f4fd";
 const GRAY = "#64748b";
@@ -232,7 +233,7 @@ export function generateQuotePDF(quote: QuoteData): Buffer {
 
   doc.setFontSize(8);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(BRAND_BLUE);
+  doc.setTextColor(BRAND_BLUE_DARK);
   doc.text("VAN", margin + 5, y + 5);
   doc.setFontSize(10);
   doc.setTextColor(BRAND_DARK);
@@ -361,14 +362,14 @@ export function generateQuotePDF(quote: QuoteData): Buffer {
     doc.text(`\u20AC ${fmt(btwAmount)}`, pageWidth - margin - 4, y + 12, { align: "right" });
 
     // Separator
-    doc.setDrawColor(BRAND_BLUE);
+    doc.setDrawColor(BRAND_BLUE_DARK);
     doc.setLineWidth(0.5);
     doc.line(totalsX + 3, y + 16, pageWidth - margin - 3, y + 16);
 
     // Total with brand blue
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(BRAND_BLUE);
+    doc.setTextColor(BRAND_BLUE_DARK);
     doc.text("Totaal incl. BTW", totalsX + 4, y + 24);
     doc.setTextColor(BRAND_RED);
     doc.text(`\u20AC ${fmt(totalInclBtw)}`, pageWidth - margin - 4, y + 24, { align: "right" });
@@ -444,7 +445,7 @@ export function generateQuotePDF(quote: QuoteData): Buffer {
     doc.roundedRect(sigCol1, y, colWidth, 40, 2, 2, "F");
     doc.setFontSize(8);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(BRAND_BLUE);
+    doc.setTextColor(BRAND_BLUE_DARK);
     doc.text("Handtekening klant", sigCol1 + 5, y + 6);
 
     if (quote.signature) {
