@@ -73,8 +73,10 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error generating PDF:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
     return NextResponse.json(
-      { error: "Er is iets misgegaan bij het genereren van de PDF" },
+      { error: "Er is iets misgegaan bij het genereren van de PDF", detail: message, stack },
       { status: 500 }
     );
   }
