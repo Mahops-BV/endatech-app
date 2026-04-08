@@ -235,7 +235,7 @@ export function generateQuotePDF(quote: QuoteData): Buffer {
   if (quote.lines.length > 0) {
     drawSectionTitle("Specificatie");
 
-    const tableResult = autoTable(doc, {
+    autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       head: [["Product", "Omschrijving", "Aantal", "Prijs/stuk", "Totaal"]],
@@ -268,7 +268,9 @@ export function generateQuotePDF(quote: QuoteData): Buffer {
       alternateRowStyles: { fillColor: "#f8fafc" },
     });
 
-    y = (tableResult as unknown as { finalY: number }).finalY + 6;
+    // Get finalY from doc.lastAutoTable or previousAutoTable
+    const lastTable = (doc as any).lastAutoTable || (doc as any).previousAutoTable;
+    y = (lastTable?.finalY ?? y + quote.lines.length * 10 + 20) + 6;
   }
 
   // ═══════════════════════════════════════════════════
