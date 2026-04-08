@@ -86,6 +86,8 @@ model AircoModel {
   price           Decimal? // Adviesprijs excl. BTW
   installationPrice Decimal? // Montagekosten excl. BTW
   description     String?  // Extra omschrijving
+  shortDescription String? // Korte omschrijving van fabrikant
+  longDescription  String? // Uitgebreide omschrijving van fabrikant
   imageUrl        String?  // Product afbeelding URL
   active          Boolean  @default(true)
   createdAt       DateTime @default(now())

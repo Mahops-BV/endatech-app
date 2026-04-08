@@ -16,6 +16,8 @@ interface AircoModel {
   price: number | null;
   installationPrice: number | null;
   description: string | null;
+  shortDescription: string | null;
+  longDescription: string | null;
   imageUrl: string | null;
   related: AircoModel[];
 }
@@ -130,6 +132,9 @@ export default function ProductDetailPage() {
             <div>
               <p className="text-sm font-semibold text-[#2563EB] uppercase tracking-wide mb-1">{product.brand}</p>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{desc.lijn || product.model}</h1>
+              {product.shortDescription && (
+                <p className="text-gray-600 mb-3">{product.shortDescription}</p>
+              )}
               {desc.kleur && <p className="text-gray-500 mb-4">Kleur: {desc.kleur}</p>}
 
               {/* Badges */}
@@ -213,14 +218,18 @@ export default function ProductDetailPage() {
       </section>
 
       {/* Beschrijving */}
-      {spec && (
+      {(product.longDescription || spec) && (
         <section className="py-10 bg-white border-t border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Over dit product</h2>
-              <p className="text-gray-600 leading-relaxed">{spec.description}</p>
+              {product.longDescription ? (
+                <div className="text-gray-600 leading-relaxed whitespace-pre-line">{product.longDescription}</div>
+              ) : spec ? (
+                <p className="text-gray-600 leading-relaxed">{spec.description}</p>
+              ) : null}
 
-              {spec.technologies.length > 0 && (
+              {spec && spec.technologies.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-4">
                   {spec.technologies.map((t) => (
                     <span key={t} className="bg-[#2563EB]/10 text-[#2563EB] px-3 py-1 rounded-full text-xs font-semibold">{t}</span>
