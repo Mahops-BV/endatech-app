@@ -192,6 +192,7 @@ export async function sendAdminSignatureNotification(data: {
   quoteNumber: string;
   name: string;
   signedAt: string;
+  pdfBuffer?: Buffer;
 }) {
   const html = layout(`
     <h2 style="color:#1e3a5f;font-size:20px;">Offerte ondertekend!</h2>
@@ -252,5 +253,63 @@ export async function sendAdminSignatureNotification(data: {
     to: adminEmail,
     subject: `Ondertekend: ${data.quoteNumber} — ${data.name}`,
     html,
+    attachments: data.pdfBuffer
+      ? [{ filename: `EndaTech-Overeenkomst-${data.quoteNumber}.pdf`, content: data.pdfBuffer, contentType: "application/pdf" }]
+      : undefined,
+  });
+}
+
+// ── Email 5: Bevestiging naar klant na ondertekening ──
+
+export async function sendCustomerSignedConfirmation(to: string, data: {
+  name: string;
+  quoteNumber: string;
+  signedAt: string;
+  pdfBuffer?: Buffer;
+}) {
+  const html = layout(`
+    <h2 style="color:#1e3a5f;font-size:20px;">Uw overeenkomst is bevestigd, ${data.name}!</h2>
+    <p style="color:#334155;line-height:1.6;">
+      Bedankt voor het ondertekenen van offerte <strong>${data.quoteNumber}</strong>.
+      Uw digitale handtekening is succesvol vastgelegd op <strong>${data.signedAt}</strong>.
+    </p>
+    <div style="background:#dcfce7;border-radius:8px;padding:16px;margin:16px 0;text-align:center;">
+      <span style="color:#166534;font-weight:bold;font-size:14px;">Overeenkomst ondertekend</span>
+    </div>
+    <p style="color:#334155;line-height:1.6;">
+      In de bijlage vindt u de ondertekende overeenkomst als PDF. Bewaar dit document voor uw eigen administratie.
+    </p>
+    <div style="background:#f0f9ff;border-radius:8px;padding:20px;margin:24px 0;">
+      <h3 style="color:#1e3a5f;font-size:14px;margin:0 0 12px;">Wat kunt u verwachten?</h3>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="padding:4px 8px;vertical-align:top;color:#1e3a5f;font-weight:bold;">1.</td>
+          <td style="padding:4px 0;color:#334155;font-size:14px;">Wij nemen binnen 2 werkdagen contact met u op om een installatiedatum af te spreken.</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 8px;vertical-align:top;color:#1e3a5f;font-weight:bold;">2.</td>
+          <td style="padding:4px 0;color:#334155;font-size:14px;">Op de installatiedag voeren onze gecertificeerde monteurs het werk uit.</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 8px;vertical-align:top;color:#1e3a5f;font-weight:bold;">3.</td>
+          <td style="padding:4px 0;color:#334155;font-size:14px;">Na afloop ontvangt u een factuur. Betaling dient binnen 14 dagen te geschieden.</td>
+        </tr>
+      </table>
+    </div>
+    <p style="color:#64748b;font-size:14px;margin-top:24px;">
+      Heeft u vragen? Neem gerust contact met ons op via
+      <a href="mailto:info@endatech.nl" style="color:#1e3a5f;">info@endatech.nl</a>
+      of bel <a href="tel:+31641088447" style="color:#1e3a5f;">06-41088447</a>.
+    </p>
+  `);
+
+  await transporter.sendMail({
+    from,
+    to,
+    subject: `Overeenkomst bevestigd — ${data.quoteNumber} — EndaTech`,
+    html,
+    attachments: data.pdfBuffer
+      ? [{ filename: `EndaTech-Overeenkomst-${data.quoteNumber}.pdf`, content: data.pdfBuffer, contentType: "application/pdf" }]
+      : undefined,
   });
 }

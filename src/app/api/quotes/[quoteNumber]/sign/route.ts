@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { sendAdminSignatureNotification } from "@/lib/email";
+import { sendAdminSignatureNotification, sendCustomerSignedConfirmation } from "@/lib/email";
+import { generateQuotePDF } from "@/lib/pdf";
 
 export async function POST(
   request: Request,
@@ -118,15 +119,63 @@ export async function POST(
       },
     });
 
-    // Notify admin about the signature
+    // Generate signed PDF
+    let pdfBuffer: Buffer | undefined;
     try {
-      await sendAdminSignatureNotification({
+      pdfBuffer = generateQuotePDF({
         quoteNumber: quote.quoteNumber,
         name: quote.name,
-        signedAt: now.toLocaleString("nl-NL", { timeZone: "Europe/Amsterdam" }),
+        email: quote.email,
+        phone: quote.phone,
+        address: quote.address,
+        postalCode: quote.postalCode,
+        city: quote.city,
+        propertyType: quote.propertyType,
+        rooms: quote.rooms,
+        description: quote.description,
+        totalAmount: quote.totalAmount ? Number(quote.totalAmount) : null,
+        btwPercentage: Number(quote.btwPercentage),
+        validUntil: quote.validUntil?.toISOString() ?? null,
+        status: "SIGNED",
+        signed: true,
+        signedAt: now.toISOString(),
+        signature: signature ?? null,
+        signedIp: ip,
+        signedDevice: JSON.stringify(deviceInfo),
+        signedLocation: locationInfo ? JSON.stringify(locationInfo) : null,
+        lines: quote.lines.map((l) => ({
+          productName: l.productName,
+          description: l.description,
+          quantity: l.quantity,
+          unitPrice: Number(l.unitPrice),
+          lineTotal: Number(l.lineTotal),
+        })),
+        createdAt: quote.createdAt.toISOString(),
       });
     } catch (err) {
-      console.error("Error sending signature notification email:", err);
+      console.error("Error generating PDF:", err);
+    }
+
+    const signedAtFormatted = now.toLocaleString("nl-NL", { timeZone: "Europe/Amsterdam" });
+
+    // Send emails to admin and customer with PDF attachment
+    try {
+      await Promise.all([
+        sendAdminSignatureNotification({
+          quoteNumber: quote.quoteNumber,
+          name: quote.name,
+          signedAt: signedAtFormatted,
+          pdfBuffer,
+        }),
+        sendCustomerSignedConfirmation(quote.email, {
+          name: quote.name,
+          quoteNumber: quote.quoteNumber,
+          signedAt: signedAtFormatted,
+          pdfBuffer,
+        }),
+      ]);
+    } catch (err) {
+      console.error("Error sending signature emails:", err);
     }
 
     return NextResponse.json({
