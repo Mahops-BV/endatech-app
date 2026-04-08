@@ -407,15 +407,20 @@ export default function AdminQuotePage() {
         {/* Save & delete buttons */}
         <div className="flex justify-between items-center">
           <button
-            onClick={async () => {
-              if (!confirm("Weet je zeker dat je deze offerte wilt verwijderen? Dit kan niet ongedaan worden.")) return;
-              try {
-                const res = await fetch(`/api/admin/quotes/${quoteNumber}`, { method: "DELETE" });
-                if (!res.ok) throw new Error();
-                router.push("/admin");
-              } catch {
-                setError("Verwijderen mislukt");
-              }
+            onClick={() => {
+              if (!window.confirm("Weet je zeker dat je deze offerte wilt verwijderen? Dit kan niet ongedaan worden.")) return;
+              fetch(`/api/admin/quotes/${quoteNumber}`, {
+                method: "DELETE",
+                credentials: "include",
+              })
+                .then((res) => {
+                  if (res.ok) {
+                    router.push("/admin");
+                  } else {
+                    res.text().then((t) => setError("Verwijderen mislukt: " + t));
+                  }
+                })
+                .catch(() => setError("Verwijderen mislukt — probeer opnieuw"));
             }}
             className="px-4 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
           >
