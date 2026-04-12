@@ -372,7 +372,7 @@ export function generateQuotePDF(quote: QuoteData): Buffer {
     doc.setFont("helvetica", "bold");
     doc.setTextColor(BRAND_BLUE_DARK);
     doc.text("Totaal incl. BTW", totalsX + 4, y + 24);
-    doc.setTextColor(BRAND_RED);
+    doc.setTextColor(BRAND_BLUE_DARK);
     doc.text(`\u20AC ${fmt(totalInclBtw)}`, pageWidth - margin - 4, y + 24, { align: "right" });
 
     y += 38;
