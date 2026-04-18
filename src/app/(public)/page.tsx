@@ -33,8 +33,8 @@ const FAQ_ITEMS = [
     a: "Moderne airco's produceren op de binnenunit circa 19 tot 30 decibel, vergelijkbaar met fluisteren. De buitenunit zit rond de 45 tot 55 decibel, vergelijkbaar met een rustig gesprek op enkele meters afstand.",
   },
   {
-    q: "Wat kost onderhoud van een airco?",
-    a: "Jaarlijks onderhoud kost bij EndaTech gemiddeld € 100 tot € 150 voor een single-split systeem en € 150 tot € 250 voor een multi-split systeem. De beurt omvat reiniging van filters, controle van de buitenunit, lekcontrole en prestatietest.",
+    q: "Hoe vaak moet een airco onderhouden worden?",
+    a: "Wij adviseren jaarlijks onderhoud. Dit verlengt de levensduur van uw toestel, houdt het energieverbruik laag en voorkomt storingen. Een onderhoudsbeurt omvat reiniging van filters, controle van de buitenunit, lekcontrole en een prestatietest.",
   },
   {
     q: "Is een airco energiezuinig?",
@@ -239,58 +239,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Prijzen */}
+      {/* Offerte op maat — geen vaste prijzen */}
       <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Wat kost een airco inclusief installatie?</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Een airco inclusief installatie kost in Nederland gemiddeld tussen de <strong>€ 1.600 en € 6.500</strong>,
-              afhankelijk van het type en het aantal ruimtes.
-            </p>
-          </div>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Elke offerte op maat</h2>
+          <p className="text-gray-700 text-lg leading-relaxed mb-6">
+            Wij werken niet met vaste prijzen op de website. Elke situatie is anders — de ruimte, het gewenste vermogen,
+            de afstand tussen binnen- en buitenunit en eventuele extra werkzaamheden bepalen de uiteindelijke prijs.
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mb-8">
+            Na uw aanvraag ontvangt u binnen 24 uur een heldere, vrijblijvende offerte. Eén totaalbedrag inclusief toestel,
+            montage, materiaal en BTW — zonder meerwerk achteraf.
+          </p>
 
-          <div className="overflow-hidden rounded-2xl border border-gray-100">
-            <table className="w-full text-left">
-              <thead className="bg-gray-50 text-sm text-gray-500">
-                <tr>
-                  <th className="px-6 py-3 font-medium">Type airco</th>
-                  <th className="px-6 py-3 font-medium text-right">Richtprijs (incl. BTW &amp; montage)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 text-gray-800">
-                {[
-                  ["Single-split, 1 ruimte (2,5 – 3,5 kW)", "€ 1.600 – € 2.400"],
-                  ["Multi-split, 2 ruimtes", "€ 3.000 – € 4.500"],
-                  ["Multi-split, 3 ruimtes", "€ 4.500 – € 6.500"],
-                  ["Cassette of vloer-/plafondmodel", "€ 2.500 – € 4.000"],
-                ].map(([name, price]) => (
-                  <tr key={name}>
-                    <td className="px-6 py-4">{name}</td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">{price}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">De prijs hangt af van:</h3>
+          <ul className="space-y-2 text-gray-700 text-left max-w-md mx-auto mb-8">
+            {[
+              "Het merk en vermogen van het toestel",
+              "Het aantal binnenunits",
+              "De afstand tussen binnen- en buitenunit",
+              "De bereikbaarheid (begane grond, verdieping of plat dak)",
+              "Eventuele extra werkzaamheden, zoals een elektragroep bijplaatsen",
+            ].map((x) => (
+              <li key={x} className="flex gap-2">
+                <span className="text-[#2563EB]">•</span>
+                <span>{x}</span>
+              </li>
+            ))}
+          </ul>
 
-          <div className="mt-8 max-w-3xl mx-auto">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">De uiteindelijke prijs hangt af van:</h3>
-            <ul className="space-y-2 text-gray-700">
-              {[
-                "Het merk en vermogen van het toestel",
-                "Het aantal binnenunits",
-                "De afstand tussen binnen- en buitenunit",
-                "De bereikbaarheid (begane grond, verdieping of plat dak)",
-                "Eventuele extra werkzaamheden, zoals een elektragroep bijplaatsen",
-              ].map((x) => (
-                <li key={x} className="flex gap-2">
-                  <span className="text-[#2563EB]">•</span>
-                  <span>{x}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Link
+            href="/offerte-aanvragen"
+            className="inline-flex items-center justify-center px-8 py-3 bg-[#2563EB] text-white font-semibold rounded-lg hover:bg-[#1d4ed8] transition-colors"
+          >
+            Vraag een offerte op maat aan
+          </Link>
         </div>
       </section>
 
