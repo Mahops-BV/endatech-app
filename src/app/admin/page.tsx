@@ -74,6 +74,15 @@ export default function AdminPage() {
           </div>
           <div className="flex items-center gap-4">
             <Link
+              href="/admin/quotes/new"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB] text-white text-sm font-medium rounded-lg hover:bg-[#1d4ed8] transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Nieuwe offerte
+            </Link>
+            <Link
               href="/admin/airco-modellen"
               className="text-sm text-[#2563EB] hover:text-[#1d4ed8] font-medium transition-colors"
             >
