@@ -4,12 +4,12 @@ import { Logo } from "@/components/Logo";
 import { TrustpilotHomepage } from "@/components/TrustpilotWidget";
 
 export const metadata: Metadata = {
-  title: "Airco kopen inclusief montage | EndaTech",
+  title: "Airco kopen inclusief montage en onderhoud | EndaTech",
   description:
     "Airco kopen inclusief montage? EndaTech plaatst binnen 1–2 weken, met vaste prijs vooraf en direct contact met uw monteur.",
   alternates: { canonical: "https://www.endatech.nl/" },
   openGraph: {
-    title: "Airco kopen inclusief montage | EndaTech",
+    title: "Airco kopen inclusief montage en onderhoud | EndaTech",
     description:
       "EndaTech levert, plaatst en onderhoudt airco's. Vaste prijs inclusief montage, snelle plaatsing en direct contact met uw monteur.",
     type: "website",
@@ -177,7 +177,7 @@ export default function HomePage() {
       {/* Intro text for SEO/GEO */}
       <section className="py-16 md:py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-gray-700 text-lg leading-relaxed space-y-5">
-          <h2 className="text-3xl font-bold text-gray-900">EndaTech — airco&apos;s leveren, plaatsen en onderhouden</h2>
+          <h2 className="text-3xl font-bold text-gray-900">Airco kopen, plaatsen en onderhouden</h2>
           <p>
             EndaTech is een installatiebedrijf dat airco&apos;s verkoopt, plaatst en onderhoudt. Wij werken voor
             particulieren én voor bedrijven, van een slaapkamer van 12 m² tot een kantoorpand met meerdere ruimtes.
@@ -242,7 +242,7 @@ export default function HomePage() {
       {/* Offerte op maat — geen vaste prijzen */}
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Elke offerte op maat</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Wat kost een airco met montage? Altijd op maat</h2>
           <p className="text-gray-700 text-lg leading-relaxed mb-6">
             Wij werken niet met vaste prijzen op de website. Elke situatie is anders — de ruimte, het gewenste vermogen,
             de afstand tussen binnen- en buitenunit en eventuele extra werkzaamheden bepalen de uiteindelijke prijs.
@@ -345,7 +345,7 @@ export default function HomePage() {
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Veelgestelde vragen</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Veelgestelde vragen over airco&apos;s</h2>
             <p className="text-gray-600">Alles wat u wilt weten voordat u een airco laat plaatsen.</p>
           </div>
 
@@ -378,7 +378,7 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Offerte aanvragen of contact opnemen</h2>
           <p className="text-xl text-blue-100 mb-8">
-            Vraag vrijblijvend een offerte aan via het formulier of mail naar info@endatech.nl. U krijgt binnen 24 uur
+            Vraag vrijblijvend een offerte aan via het formulier of neem contact met ons op. U krijgt binnen 24 uur
             reactie met een vaste prijs en een voorstel voor plaatsing.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
