@@ -4,14 +4,14 @@ import { Logo } from "@/components/Logo";
 import { TrustpilotHomepage } from "@/components/TrustpilotWidget";
 
 export const metadata: Metadata = {
-  title: "Airco kopen inclusief montage in Nederland | EndaTech",
+  title: "Airco kopen inclusief montage | EndaTech",
   description:
-    "Airco kopen inclusief montage in Nederland? EndaTech plaatst binnen 1–2 weken, met vaste prijs vooraf en direct contact met uw monteur.",
+    "Airco kopen inclusief montage? EndaTech plaatst binnen 1–2 weken, met vaste prijs vooraf en direct contact met uw monteur.",
   alternates: { canonical: "https://www.endatech.nl/" },
   openGraph: {
-    title: "Airco kopen inclusief montage in Nederland | EndaTech",
+    title: "Airco kopen inclusief montage | EndaTech",
     description:
-      "EndaTech levert, plaatst en onderhoudt airco's door heel Nederland. Vaste prijs inclusief montage, snelle plaatsing en direct contact met uw monteur.",
+      "EndaTech levert, plaatst en onderhoudt airco's. Vaste prijs inclusief montage, snelle plaatsing en direct contact met uw monteur.",
     type: "website",
     locale: "nl_NL",
     url: "https://www.endatech.nl/",
@@ -67,7 +67,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   url: "https://www.endatech.nl",
   email: "info@endatech.nl",
   description:
-    "EndaTech levert, plaatst en onderhoudt airco's voor particulieren en bedrijven door heel Nederland. Airco kopen inclusief montage, met vaste prijs vooraf en direct contact met de monteur.",
+    "EndaTech levert, plaatst en onderhoudt airco's voor particulieren en bedrijven. Airco kopen inclusief montage, met vaste prijs vooraf en direct contact met de monteur.",
   image: "https://www.endatech.nl/logo.png",
   priceRange: "€€",
   areaServed: { "@type": "Country", name: "Nederland" },
@@ -121,7 +121,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-                Airco kopen inclusief montage in Nederland
+                Airco kopen inclusief montage
               </h1>
               <p className="text-xl text-gray-600 mb-8">
                 <span className="font-semibold text-[#2563EB]">EndaTech</span> levert, plaatst en onderhoudt airco&apos;s
@@ -179,7 +179,7 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-gray-700 text-lg leading-relaxed space-y-5">
           <h2 className="text-3xl font-bold text-gray-900">EndaTech — airco&apos;s leveren, plaatsen en onderhouden</h2>
           <p>
-            EndaTech is een Nederlands installatiebedrijf dat airco&apos;s verkoopt, plaatst en onderhoudt. Wij werken voor
+            EndaTech is een installatiebedrijf dat airco&apos;s verkoopt, plaatst en onderhoudt. Wij werken voor
             particulieren én voor bedrijven, van een slaapkamer van 12 m² tot een kantoorpand met meerdere ruimtes.
           </p>
           <p>
@@ -187,7 +187,7 @@ export default function HomePage() {
             contact met de monteur die het werk uitvoert. Geen callcenter, geen meerwerk achteraf.
           </p>
           <p>
-            Een standaard installatie plannen we binnen één tot twee weken en ronden we af in één werkdag. We werken door heel Nederland.
+            Een standaard installatie plannen we binnen één tot twee weken en ronden we af in één werkdag.
           </p>
         </div>
       </section>
@@ -320,7 +320,7 @@ export default function HomePage() {
               },
               {
                 title: "Kwaliteitsmerken",
-                desc: "Wij werken met Mitsubishi, Daikin, LG en Gree — merken die zich in Nederland bewezen hebben.",
+                desc: "Wij werken met Mitsubishi, Daikin, LG en Gree — merken waarvan we de kwaliteit kennen.",
               },
               {
                 title: "2 jaar garantie",
