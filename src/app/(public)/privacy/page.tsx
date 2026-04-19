@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmailLink } from "@/components/EmailLink";
 
 export const metadata = {
   title: "Privacyverklaring - EndaTech",
@@ -22,7 +23,7 @@ export default function PrivacyPage() {
           <div className="bg-gray-50 rounded-xl p-4 mt-4 text-sm space-y-1">
             <p><strong>Bedrijfsnaam:</strong> EndaTech</p>
             <p><strong>Website:</strong> www.endatech.nl</p>
-            <p><strong>E-mail:</strong> info@endatech.nl</p>
+            <p><strong>E-mail:</strong> <EmailLink /></p>
             <p><strong>Telefoon:</strong> 06-41088447</p>
           </div>
         </section>
@@ -100,9 +101,7 @@ export default function PrivacyPage() {
           </ul>
           <p className="mt-3">
             U kunt een verzoek indienen via{" "}
-            <a href="mailto:info@endatech.nl" className="text-[#2563EB] hover:underline">
-              info@endatech.nl
-            </a>
+            <EmailLink className="text-[#2563EB] hover:underline" />
             . Wij reageren binnen 30 dagen.
           </p>
         </section>

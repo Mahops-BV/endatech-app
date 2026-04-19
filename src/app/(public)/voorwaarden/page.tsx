@@ -1,3 +1,5 @@
+import { EmailLink } from "@/components/EmailLink";
+
 export const metadata = {
   title: "Algemene voorwaarden - EndaTech",
   description: "Algemene voorwaarden van EndaTech voor airco verkoop, installatie en onderhoud.",
@@ -99,9 +101,7 @@ export default function VoorwaardenPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-3">10. Contact</h2>
           <p>
             Voor vragen over deze voorwaarden kunt u contact opnemen via{" "}
-            <a href="mailto:info@endatech.nl" className="text-[#2563EB] hover:underline">
-              info@endatech.nl
-            </a>{" "}
+            <EmailLink className="text-[#2563EB] hover:underline" />{" "}
             of <a href="tel:+31641088447" className="text-[#2563EB] hover:underline">06-41088447</a>.
           </p>
         </section>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmailLink } from "@/components/EmailLink";
 
 export const metadata = {
   title: "Cookiebeleid - EndaTech",
@@ -91,9 +92,7 @@ export default function CookiesPage() {
               privacyverklaring
             </Link>
             . Bij vragen kunt u contact opnemen via{" "}
-            <a href="mailto:info@endatech.nl" className="text-[#2563EB] hover:underline">
-              info@endatech.nl
-            </a>
+            <EmailLink className="text-[#2563EB] hover:underline" />
             .
           </p>
         </section>

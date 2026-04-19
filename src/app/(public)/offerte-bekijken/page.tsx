@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import SignaturePad from "@/components/signing/SignaturePad";
 import type { SignatureData } from "@/components/signing/SignaturePad";
+import { EmailLink } from "@/components/EmailLink";
 
 interface QuoteLine {
   productName: string;
@@ -274,9 +275,7 @@ function OfferteBekijkenContent() {
               <h3 className="font-medium text-gray-900 mb-2">Problemen?</h3>
               <p className="text-gray-600">
                 Neem contact op via{" "}
-                <a href="mailto:info@endatech.nl" className="text-[#2563EB] hover:underline">
-                  info@endatech.nl
-                </a>
+                <EmailLink className="text-[#2563EB] hover:underline" />
               </p>
             </div>
           </div>
@@ -352,15 +351,15 @@ function OfferteBekijkenContent() {
                     </svg>
                     Bel 06-41088447
                   </a>
-                  <a
-                    href="mailto:info@endatech.nl"
+                  <Link
+                    href="/contact"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     E-mail ons
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

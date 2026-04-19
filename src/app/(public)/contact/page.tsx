@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { EmailLink } from "@/components/EmailLink";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,9 +93,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-900">E-mail</h3>
-                  <a href="mailto:info@endatech.nl" className="text-[#2563EB] hover:underline">
-                    info@endatech.nl
-                  </a>
+                  <EmailLink className="text-[#2563EB] hover:underline" />
                 </div>
               </div>
 
