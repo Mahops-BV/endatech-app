@@ -24,7 +24,7 @@ export default function PrivacyPage() {
             <p><strong>Bedrijfsnaam:</strong> EndaTech</p>
             <p><strong>Website:</strong> www.endatech.nl</p>
             <p><strong>E-mail:</strong> <EmailLink /></p>
-            <p><strong>Telefoon:</strong> 06-41088447</p>
+            <p><strong>Telefoon:</strong> <a href="tel:+31641088447" className="text-[#2563EB] hover:underline">06-41088447</a></p>
           </div>
         </section>
 
