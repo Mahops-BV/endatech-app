@@ -162,6 +162,7 @@ export async function sendQuoteReadyNotification(to: string, data: {
   name: string;
   quoteNumber: string;
   phone: string;
+  pdfBuffer?: Buffer;
 }) {
   const directLink = `${baseUrl}/offerte-bekijken?nr=${encodeURIComponent(data.quoteNumber)}&tel=${encodeURIComponent(data.phone)}`;
   const html = layout(`
@@ -172,6 +173,7 @@ export async function sendQuoteReadyNotification(to: string, data: {
     ${button(directLink, 'Offerte bekijken & ondertekenen')}
     <p style="color:#334155;line-height:1.6;">
       Klik op de knop hierboven om direct uw offerte te openen. U kunt de offerte bekijken en digitaal ondertekenen.
+      ${data.pdfBuffer ? "In de bijlage vindt u de offerte ook als PDF." : ""}
     </p>
     <p style="color:#64748b;font-size:14px;margin-top:24px;">
       Heeft u vragen over de offerte? Neem gerust contact met ons op via <a href="mailto:info@endatech.nl" style="color:#1e3a5f;">info@endatech.nl</a> of bel ons.
@@ -183,6 +185,9 @@ export async function sendQuoteReadyNotification(to: string, data: {
     to,
     subject: `Uw offerte ${data.quoteNumber} is klaar — EndaTech`,
     html,
+    attachments: data.pdfBuffer
+      ? [{ filename: `EndaTech-Offerte-${data.quoteNumber}.pdf`, content: data.pdfBuffer, contentType: "application/pdf" }]
+      : undefined,
   });
 }
 

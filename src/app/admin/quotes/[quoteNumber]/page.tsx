@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -72,6 +72,158 @@ const STATUS_COLORS: Record<string, string> = {
 
 const EMPTY_LINE: QuoteLine = { productName: "", description: "", quantity: 1, unitPrice: 0, lineTotal: 0 };
 
+interface ProductOption {
+  value: string;          // model id, "DIVERSEN", or ""
+  label: string;          // display label e.g. "Daikin Sensira FTXC25C"
+  brand: string;
+  searchText: string;
+  priceLabel: string;
+}
+
+function ProductCombobox({
+  value,
+  options,
+  onPick,
+}: {
+  value: string;
+  options: ProductOption[];
+  onPick: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [rect, setRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const selected = options.find((o) => o.value === value);
+
+  function updateRect() {
+    const btn = buttonRef.current;
+    if (!btn) return;
+    const r = btn.getBoundingClientRect();
+    setRect({ top: r.bottom + 4, left: r.left, width: Math.max(r.width, 280) });
+  }
+
+  function openPanel() {
+    updateRect();
+    setOpen(true);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointer(e: MouseEvent) {
+      if (
+        buttonRef.current?.contains(e.target as Node) ||
+        panelRef.current?.contains(e.target as Node)
+      ) return;
+      setOpen(false);
+      setQuery("");
+    }
+    function onScrollResize() { updateRect(); }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") { setOpen(false); setQuery(""); }
+    }
+
+    document.addEventListener("mousedown", onPointer);
+    window.addEventListener("scroll", onScrollResize, true);
+    window.addEventListener("resize", onScrollResize);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      window.removeEventListener("scroll", onScrollResize, true);
+      window.removeEventListener("resize", onScrollResize);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return options;
+    return options.filter((o) => o.searchText.includes(q));
+  }, [query, options]);
+
+  const grouped = useMemo(() => {
+    const groups: Record<string, ProductOption[]> = {};
+    for (const o of filtered) (groups[o.brand] ??= []).push(o);
+    return Object.entries(groups);
+  }, [filtered]);
+
+  return (
+    <>
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={() => (open ? setOpen(false) : openPanel())}
+        className="w-full text-left px-2 py-1.5 border border-gray-200 rounded text-sm bg-white focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none flex items-center justify-between gap-2"
+      >
+        <span className={selected ? "text-gray-900 truncate" : "text-gray-400 truncate"}>
+          {selected ? selected.label : "— Kies product —"}
+        </span>
+        <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && rect && (
+        <div
+          ref={panelRef}
+          style={{ position: "fixed", top: rect.top, left: rect.left, width: rect.width }}
+          className="z-50 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-hidden flex flex-col"
+        >
+          <div className="p-2 border-b border-gray-100">
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Zoek op merk of model..."
+              className="w-full px-2 py-1.5 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+            />
+          </div>
+          <div className="overflow-y-auto flex-1">
+            {filtered.length === 0 ? (
+              <div className="px-3 py-4 text-sm text-gray-400 text-center">Geen producten gevonden</div>
+            ) : (
+              grouped.map(([brand, items]) => (
+                <div key={brand}>
+                  {brand !== "" && (
+                    <div className="px-3 py-1 text-xs font-medium text-gray-400 bg-gray-50 sticky top-0">
+                      {brand}
+                    </div>
+                  )}
+                  {items.map((o) => (
+                    <button
+                      key={o.value || o.label}
+                      type="button"
+                      onClick={() => {
+                        onPick(o.value);
+                        setOpen(false);
+                        setQuery("");
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between gap-2 ${o.value === value ? "bg-blue-50" : ""}`}
+                    >
+                      <span className="text-gray-900 truncate">{o.label}</span>
+                      {o.priceLabel && (
+                        <span className="text-gray-500 text-xs flex-shrink-0">{o.priceLabel}</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function AdminQuotePage() {
   const params = useParams();
   const router = useRouter();
@@ -84,6 +236,11 @@ export default function AdminQuotePage() {
   const [error, setError] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // Send-mail state
+  const [sendEmail, setSendEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendMessage, setSendMessage] = useState<{ kind: "success" | "error"; text: string } | null>(null);
 
   // Form state
   const [description, setDescription] = useState("");
@@ -99,10 +256,29 @@ export default function AdminQuotePage() {
       .then((data: AircoModel[]) => setAircoModels(data.filter((m) => m.active)));
   }, []);
 
-  const modelsByBrand = useMemo(() => {
-    const groups: Record<string, AircoModel[]> = {};
-    for (const m of aircoModels) (groups[m.brand] ??= []).push(m);
-    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+  const productOptions = useMemo<ProductOption[]>(() => {
+    const sorted = [...aircoModels].sort(
+      (a, b) => a.brand.localeCompare(b.brand) || a.model.localeCompare(b.model)
+    );
+    const opts: ProductOption[] = sorted.map((m) => {
+      const p = (m.price ?? 0) + (m.installationPrice ?? 0);
+      const label = `${m.brand} ${m.model}`;
+      return {
+        value: m.id,
+        label,
+        brand: m.brand,
+        searchText: label.toLowerCase(),
+        priceLabel: p > 0 ? `€ ${p.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}` : "",
+      };
+    });
+    opts.unshift({
+      value: "DIVERSEN",
+      label: "Diversen",
+      brand: "",
+      searchText: "diversen",
+      priceLabel: "",
+    });
+    return opts;
   }, [aircoModels]);
 
   function selectedValue(productName: string): string {
@@ -148,6 +324,7 @@ export default function AdminQuotePage() {
       setStatus(data.status);
       setBtwPercentage(data.btwPercentage ?? 21);
       setLines(data.lines.length > 0 ? data.lines : [{ ...EMPTY_LINE }]);
+      setSendEmail((prev) => prev || data.email);
     } finally {
       setLoading(false);
     }
@@ -178,6 +355,37 @@ export default function AdminQuotePage() {
   const subtotal = lines.reduce((sum, l) => sum + (l.quantity * l.unitPrice), 0);
   const btwAmount = subtotal * (btwPercentage / 100);
   const totalInclBtw = subtotal + btwAmount;
+
+  async function handleSendToCustomer() {
+    setSendMessage(null);
+    const recipient = sendEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
+      setSendMessage({ kind: "error", text: "Vul een geldig e-mailadres in." });
+      return;
+    }
+    setSending(true);
+    try {
+      const res = await fetch(`/api/admin/quotes/${quoteNumber}/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: recipient }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Versturen mislukt");
+      }
+      setSendMessage({ kind: "success", text: `Offerte verstuurd naar ${data.sentTo || recipient}` });
+      // Refresh in case status changed PENDING → SENT
+      fetchQuote();
+    } catch (err) {
+      setSendMessage({
+        kind: "error",
+        text: err instanceof Error ? err.message : "Versturen mislukt",
+      });
+    } finally {
+      setSending(false);
+    }
+  }
 
   async function handleSave() {
     setSaving(true);
@@ -363,6 +571,68 @@ export default function AdminQuotePage() {
           </div>
         </div>
 
+        {/* Send to customer */}
+        <div className="bg-white rounded-xl border border-gray-100 p-6">
+          <h2 className="font-semibold text-gray-900 mb-1">Offerte versturen naar klant</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Verstuur de offerte (incl. PDF-bijlage) per e-mail. Pas het adres aan als de klant naar een ander e-mailadres wil ontvangen.
+          </p>
+
+          {sendMessage && (
+            <div
+              className={`mb-4 p-3 rounded-lg text-sm border ${
+                sendMessage.kind === "success"
+                  ? "bg-green-50 border-green-200 text-green-700"
+                  : "bg-red-50 border-red-200 text-red-700"
+              }`}
+            >
+              {sendMessage.text}
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">E-mailadres</label>
+              <input
+                type="email"
+                value={sendEmail}
+                onChange={(e) => setSendEmail(e.target.value)}
+                placeholder="klant@voorbeeld.nl"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+              />
+              {quote.email && sendEmail.trim() !== quote.email && (
+                <p className="mt-1 text-xs text-gray-400">
+                  Origineel adres uit aanvraag:{" "}
+                  <button
+                    type="button"
+                    onClick={() => setSendEmail(quote.email)}
+                    className="text-[#2563EB] hover:underline"
+                  >
+                    {quote.email}
+                  </button>
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleSendToCustomer}
+              disabled={sending}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2563EB] text-white text-sm font-semibold rounded-lg hover:bg-[#1d4ed8] transition-colors disabled:opacity-50"
+            >
+              {sending ? (
+                "Versturen..."
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Verstuur naar klant
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
         {/* Line items table */}
         <div className="bg-white rounded-xl border border-gray-100 p-6">
           <h2 className="font-semibold text-gray-900 mb-4">Producten & diensten</h2>
@@ -383,26 +653,11 @@ export default function AdminQuotePage() {
                 {lines.map((line, i) => (
                   <tr key={i} className="border-b border-gray-100">
                     <td className="py-2 pr-2">
-                      <select
+                      <ProductCombobox
                         value={selectedValue(line.productName)}
-                        onChange={(e) => handlePickProduct(i, e.target.value)}
-                        className="w-full px-2 py-1.5 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none bg-white"
-                      >
-                        <option value="">— Kies product —</option>
-                        <option value="DIVERSEN">Diversen</option>
-                        {modelsByBrand.map(([brand, items]) => (
-                          <optgroup key={brand} label={brand}>
-                            {items.map((m) => {
-                              const p = (m.price ?? 0) + (m.installationPrice ?? 0);
-                              return (
-                                <option key={m.id} value={m.id}>
-                                  {m.model}{p > 0 ? ` — € ${p.toLocaleString("nl-NL", { minimumFractionDigits: 2 })}` : ""}
-                                </option>
-                              );
-                            })}
-                          </optgroup>
-                        ))}
-                      </select>
+                        options={productOptions}
+                        onPick={(value) => handlePickProduct(i, value)}
+                      />
                     </td>
                     <td className="py-2 pr-2">
                       <input
