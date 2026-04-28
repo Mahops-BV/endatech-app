@@ -3,16 +3,77 @@
 import { useState } from "react";
 import Link from "next/link";
 
+type RoomEntry = {
+  type: string;
+  customName: string;
+  area: string;
+  unknown: boolean;
+};
+
+const ROOM_OPTIONS = [
+  "Woonkamer",
+  "Slaapkamer",
+  "Keuken",
+  "Studeer-/werkkamer",
+  "Zolder",
+  "Kantoor",
+  "Garage",
+  "Anders",
+];
+
+function emptyRoom(): RoomEntry {
+  return { type: "", customName: "", area: "", unknown: false };
+}
+
+function serializeRooms(rooms: RoomEntry[]): string {
+  return rooms
+    .map((r) => {
+      const name = r.type === "Anders" ? r.customName.trim() : r.type;
+      const size = r.unknown ? "m² onbekend" : `${r.area} m²`;
+      return `${name} (${size})`;
+    })
+    .join(", ");
+}
+
 export default function OfferteAanvragenPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [quoteNumber, setQuoteNumber] = useState("");
   const [error, setError] = useState("");
+  const [rooms, setRooms] = useState<RoomEntry[]>([emptyRoom()]);
+
+  function updateRoom(index: number, patch: Partial<RoomEntry>) {
+    setRooms((prev) => prev.map((r, i) => (i === index ? { ...r, ...patch } : r)));
+  }
+
+  function addRoom() {
+    setRooms((prev) => [...prev, emptyRoom()]);
+  }
+
+  function removeRoom(index: number) {
+    setRooms((prev) => (prev.length === 1 ? prev : prev.filter((_, i) => i !== index)));
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsSubmitting(true);
     setError("");
+
+    for (const r of rooms) {
+      if (!r.type) {
+        setError("Selecteer voor elke ruimte een type.");
+        return;
+      }
+      if (r.type === "Anders" && !r.customName.trim()) {
+        setError("Vul een naam in voor de ruimte 'Anders'.");
+        return;
+      }
+      if (!r.unknown && !r.area.trim()) {
+        setError("Vul het aantal m² in of geef aan dat je het niet weet.");
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
 
@@ -28,7 +89,7 @@ export default function OfferteAanvragenPage() {
           postalCode: formData.get("postalCode"),
           city: formData.get("city"),
           propertyType: formData.get("propertyType"),
-          rooms: formData.get("rooms"),
+          rooms: serializeRooms(rooms),
           notes: formData.get("notes"),
         }),
       });
@@ -224,18 +285,109 @@ export default function OfferteAanvragenPage() {
             </div>
 
             {/* Gewenste ruimte(s) */}
-            <div>
-              <label htmlFor="rooms" className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Gewenste ruimte(s) *
               </label>
-              <input
-                type="text"
-                id="rooms"
-                name="rooms"
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all"
-                placeholder="Bijv. woonkamer, slaapkamer"
-              />
+              <p className="text-sm text-gray-500 mb-3">
+                Geef per ruimte aan om hoeveel m² het gaat, of vink aan dat je het niet weet.
+              </p>
+
+              <div className="space-y-3">
+                {rooms.map((room, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-200 rounded-lg p-4 bg-gray-50"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Ruimte
+                        </label>
+                        <select
+                          value={room.type}
+                          onChange={(e) => updateRoom(index, { type: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all bg-white"
+                        >
+                          <option value="">Selecteer ruimte</option>
+                          {ROOM_OPTIONS.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                        {room.type === "Anders" && (
+                          <input
+                            type="text"
+                            value={room.customName}
+                            onChange={(e) =>
+                              updateRoom(index, { customName: e.target.value })
+                            }
+                            placeholder="Naam van de ruimte"
+                            className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all"
+                          />
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Oppervlakte (m²)
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          inputMode="numeric"
+                          value={room.area}
+                          disabled={room.unknown}
+                          onChange={(e) =>
+                            updateRoom(index, { area: e.target.value })
+                          }
+                          placeholder="Bijv. 25"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                        />
+                        <label className="mt-2 flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={room.unknown}
+                            onChange={(e) =>
+                              updateRoom(index, {
+                                unknown: e.target.checked,
+                                area: e.target.checked ? "" : room.area,
+                              })
+                            }
+                            className="w-4 h-4 rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB]"
+                          />
+                          Ik weet het niet
+                        </label>
+                      </div>
+                    </div>
+
+                    {rooms.length > 1 && (
+                      <div className="mt-3 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => removeRoom(index)}
+                          className="text-sm text-red-600 hover:text-red-700 font-medium"
+                        >
+                          Verwijderen
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={addRoom}
+                className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-[#2563EB] hover:text-[#1d4ed8]"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Ruimte toevoegen
+              </button>
             </div>
 
             {/* Extra opmerkingen */}
